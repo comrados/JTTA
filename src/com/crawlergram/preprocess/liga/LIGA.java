@@ -5,14 +5,14 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor.liga;
+package com.crawlergram.preprocess.liga;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.crawlergram.topicextractor.extractormethods.Tokenizer;
+import com.crawlergram.preprocess.Tokenizer;
 import com.fasterxml.jackson.core.*;
 import org.apache.commons.lang3.tuple.MutablePair;
 

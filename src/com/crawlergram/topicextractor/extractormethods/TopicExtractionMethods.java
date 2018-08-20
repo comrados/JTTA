@@ -8,10 +8,12 @@
 package com.crawlergram.topicextractor.extractormethods;
 
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.topicextractor.gras.GRAS;
+import com.crawlergram.preprocess.MessageMergingMethods;
+import com.crawlergram.preprocess.Tokenizer;
+import com.crawlergram.preprocess.gras.GRAS;
 import com.crawlergram.topicextractor.ldadmm.models.GSDMM;
 import com.crawlergram.topicextractor.ldadmm.models.GSLDA;
-import com.crawlergram.topicextractor.liga.LIGA;
+import com.crawlergram.preprocess.liga.LIGA;
 import com.crawlergram.topicextractor.structures.TEDialog;
 import com.crawlergram.topicextractor.structures.message.TEMessage;
 import com.crawlergram.topicextractor.structures.results.TEResults;

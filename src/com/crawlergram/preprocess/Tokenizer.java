@@ -1,11 +1,11 @@
 /*
  * Title: Tokenizer.java
- * Project: telegramJ
+ * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
  */
 
-package com.crawlergram.topicextractor.extractormethods;
+package com.crawlergram.preprocess;
 
 import com.crawlergram.topicextractor.structures.message.TEMessage;
 

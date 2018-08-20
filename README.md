@@ -1,6 +1,6 @@
-## JTTE
+## JTTA
 
-Java Topic Extractor for Telegram. Works with data extracted by [Crawlergram](https://github.com/comrados/Crawlergram).
+Java Telegram Text Analyzer. Works with data extracted by [Crawlergram](https://github.com/comrados/Crawlergram).
 
 ## Dependencies
 

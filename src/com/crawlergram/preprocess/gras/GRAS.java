@@ -8,7 +8,7 @@
  *
  * */
 
-package com.crawlergram.topicextractor.gras;
+package com.crawlergram.preprocess.gras;
 
 import java.util.*;
 

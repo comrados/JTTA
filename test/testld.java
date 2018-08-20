@@ -7,15 +7,11 @@
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
-import com.crawlergram.topicextractor.extractormethods.Tokenizer;
-import com.crawlergram.topicextractor.extractormethods.TopicExtractionMethods;
-import com.crawlergram.topicextractor.liga.LIGA;
+import com.crawlergram.preprocess.Tokenizer;
+import com.crawlergram.preprocess.liga.LIGA;
 import com.crawlergram.topicextractor.structures.TEDialog;
 import com.crawlergram.topicextractor.structures.message.TEMessage;
-import org.apache.tika.langdetect.Lingo24LangDetector;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
-import org.apache.tika.langdetect.TextLangDetector;
-import org.apache.tika.language.LanguageIdentifier;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
 

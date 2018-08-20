@@ -10,7 +10,7 @@ package com.crawlergram.topicextractor;
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.topicextractor.extractormethods.TopicExtractionMethods;
-import com.crawlergram.topicextractor.liga.LIGA;
+import com.crawlergram.preprocess.liga.LIGA;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
 

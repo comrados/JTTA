@@ -1,15 +1,15 @@
 /*
  * Title: MessageMergingMethods.java
- * Project: telegramJ
+ * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
  */
 
-package com.crawlergram.topicextractor.extractormethods;
+package com.crawlergram.preprocess;
 
-import com.crawlergram.topicextractor.gaussnewton.ExpRegMethods;
-import com.crawlergram.topicextractor.gaussnewton.GaussNewton;
-import com.crawlergram.topicextractor.gaussnewton.NoSquareException;
+import com.crawlergram.preprocess.gaussnewton.ExpRegMethods;
+import com.crawlergram.preprocess.gaussnewton.GaussNewton;
+import com.crawlergram.preprocess.gaussnewton.NoSquareException;
 import com.crawlergram.topicextractor.structures.TEDialog;
 import com.crawlergram.topicextractor.structures.message.TEMessage;
 import com.crawlergram.topicextractor.structures.message.TEMessageComparator;
