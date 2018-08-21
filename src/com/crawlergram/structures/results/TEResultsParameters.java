@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor.structures.results;
+package com.crawlergram.structures.results;
 
 public class TEResultsParameters {
 

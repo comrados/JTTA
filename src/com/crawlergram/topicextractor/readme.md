@@ -1,3 +1,3 @@
 ## Topic Extractor
+Topic extraction (LDA & DMM) from Telegram chats.
 TopicExtractorMain - main class.
-(Will be, probably, moved to the other project)

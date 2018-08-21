@@ -5,14 +5,13 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor.structures.message;
+package com.crawlergram.structures.message;
 
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.bson.Document;
 
 import java.util.*;
 
-public class TEMessage {
+public class TMessage {
 
     private Integer id;
     private String text;
@@ -21,7 +20,7 @@ public class TEMessage {
     private List<String> tokens;
     private Map<String, Double> langs;
 
-    public TEMessage() {
+    public TMessage() {
         this.id = 0;
         this.text = "";
         this.stemmedText = null;
@@ -30,7 +29,7 @@ public class TEMessage {
         this.langs = new TreeMap<>();
     }
 
-    public TEMessage(Integer id, String text, Integer date) {
+    public TMessage(Integer id, String text, Integer date) {
         this.id = id;
         this.text = text;
         this.stemmedText = null;
@@ -116,7 +115,7 @@ public class TEMessage {
      *
      * @param doc document
      */
-    public static TEMessage topicExtractionMessageFromMongoDocument(Document doc) {
+    public static TMessage topicExtractionMessageFromMongoDocument(Document doc) {
         if (doc.get("class").equals("Message")) {
             Integer id = (Integer) doc.get("_id");
             Integer date = (Integer) doc.get("date");
@@ -124,10 +123,24 @@ public class TEMessage {
             if (text.isEmpty()) {
                 text = getMediaCaption((Document) doc.get("media"));
             }
-            return new TEMessage(id, text, date);
+            return new TMessage(id, text, date);
         } else {
-            return new TEMessage();
+            return new TMessage();
         }
+    }
+
+    /**
+     * Converts mongoDB's documents to TEM (extracts text of message or media's caption)
+     * Strings are set converted to lowercase
+     *
+     * @param docs documents
+     */
+    public static List<TMessage> topicExtractionMessagesFromMongoDocuments(List<Document> docs) {
+        List<TMessage> msgs = new ArrayList<>();
+        for (Document doc: docs){
+            msgs.add(topicExtractionMessageFromMongoDocument(doc));
+        }
+        return msgs;
     }
 
     /**

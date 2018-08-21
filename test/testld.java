@@ -9,8 +9,8 @@ import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocess.Tokenizer;
 import com.crawlergram.preprocess.liga.LIGA;
-import com.crawlergram.topicextractor.structures.TEDialog;
-import com.crawlergram.topicextractor.structures.message.TEMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.message.TMessage;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
@@ -66,10 +66,10 @@ public class testld {
         System.out.println(liga.classify(en3));
         */
 
-        List<TEDialog> dialogs = dbStorage.getDialogs();
-        TEDialog dialog = dialogs.get(1);
+        List<TDialog> dialogs = dbStorage.getDialogs();
+        TDialog dialog = dialogs.get(1);
 
-        List<TEMessage> msgs = dbStorage.readMessages(dialog);
+        List<TMessage> msgs = TMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));
 
         removeEmptyMessages(msgs);
         msgs = Tokenizer.tokenizeMessages(msgs);
@@ -82,7 +82,7 @@ public class testld {
         int nonl = 0;
         int nont = 0;
 
-        for (TEMessage msg: msgs){
+        for (TMessage msg: msgs){
             String ligaLang = msg.getBestLang();
             String tikaLang = detectLanguage(msg.getText(), detector);
 
@@ -117,7 +117,7 @@ public class testld {
         System.out.println("Tika == null: " + nont);
     }
 
-    private static void removeEmptyMessages(List<TEMessage> msgs) {
+    private static void removeEmptyMessages(List<TMessage> msgs) {
         for (int i = 0; i < msgs.size(); i++) {
             if (msgs.get(i).getText().isEmpty()) {
                 msgs.remove(i);
@@ -125,8 +125,8 @@ public class testld {
         }
     }
 
-    private static void getMessageLanguages(List<TEMessage> msgs, LIGA liga){
-        for (TEMessage msg: msgs)
+    private static void getMessageLanguages(List<TMessage> msgs, LIGA liga){
+        for (TMessage msg: msgs)
             msg.setLangs(liga.classify(msg.getClearText()));
     }
 

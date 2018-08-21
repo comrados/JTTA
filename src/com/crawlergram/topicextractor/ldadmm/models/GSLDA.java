@@ -7,9 +7,9 @@
 package com.crawlergram.topicextractor.ldadmm.models;
 
 import com.crawlergram.topicextractor.ldadmm.utility.FuncUtils;
-import com.crawlergram.topicextractor.structures.message.TEMessage;
-import com.crawlergram.topicextractor.structures.results.TEResults;
-import com.crawlergram.topicextractor.structures.results.TEResultsParameters;
+import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.results.TEResults;
+import com.crawlergram.structures.results.TEResultsParameters;
 
 import java.util.*;
 
@@ -74,7 +74,7 @@ public class GSLDA {
      * @param inNumIterations number of iterations
      * @param inTopWords      top topic words for output
      */
-    public GSLDA(List<TEMessage> msgs, int inNumTopics,
+    public GSLDA(List<TMessage> msgs, int inNumTopics,
                  double inAlpha, double inBeta, int inNumIterations, int inTopWords) {
 
         alpha = inAlpha;
@@ -93,7 +93,7 @@ public class GSLDA {
 
         int indexWord = -1;
 
-        for (TEMessage msg : msgs) {
+        for (TMessage msg : msgs) {
             String doc = msg.getStemmedText();
             if (doc.trim().length() == 0) continue;
 

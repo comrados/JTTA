@@ -1,11 +1,11 @@
 /*
- * Title: TopicExtractorMain.java
- * Project: telegramJ
+ * Title: ClassificationMain.java
+ * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
  */
 
-package com.crawlergram.topicextractor;
+package com.crawlergram.textclassification;
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class TopicExtractorMain {
+public class TextClassificationMain {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
 
         // DB "telegram" location - localhost:27017
         // User "telegramJ" - db.createUser({user: "telegramJ", pwd: "cart", roles: [{ role: "readWrite", db: "telegram" }]})
@@ -37,12 +37,11 @@ public class TopicExtractorMain {
             tikaLD = new OptimaizeLangDetector().loadModels();
         } catch (IOException e){}
 
-
         // map for stopwords to prevent multiple file readings
         Map<String, Set<String>> stopwords = new TreeMap<>();
 
-        // do topic extraction
-        TopicExtractionMethods.getTopicsForAllDialogs(dbStorage, 0, 0, 200, false, tikaLD, stopwords);
+        //TODO
+        //TextClassificationMethods.classifyAllDialogs(dbStorage, 0, 0, 100, false, tikaLD, stopwords);
 
         // drop model and stopwords to save memory
         liga.dropModel();

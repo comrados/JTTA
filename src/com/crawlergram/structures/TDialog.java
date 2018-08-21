@@ -5,11 +5,11 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor.structures;
+package com.crawlergram.structures;
 
 import org.bson.Document;
 
-public class TEDialog {
+public class TDialog {
 
     private Integer id;
     private String type;
@@ -17,7 +17,7 @@ public class TEDialog {
     private String username;
     private Integer flags;
 
-    public TEDialog(Integer id, String type, Long accessHash, String username, Integer flags) {
+    public TDialog(Integer id, String type, Long accessHash, String username, Integer flags) {
         this.id = id;
         this.type = type;
         this.accessHash = accessHash;
@@ -25,7 +25,7 @@ public class TEDialog {
         this.flags = flags;
     }
 
-    public TEDialog() {
+    public TDialog() {
         this.id = 0;
         this.type = "";
         this.accessHash = 0L;
@@ -78,7 +78,7 @@ public class TEDialog {
      *
      * @param info info from CHATS or USERS collections
      */
-    public static TEDialog topicExtractionDialogFromMongoDocument(Document info) {
+    public static TDialog topicExtractionDialogFromMongoDocument(Document info) {
         Integer id = (Integer) info.get("_id");
         String type = (String) info.get("class");
         Integer flags = (Integer) info.get("flags");
@@ -92,6 +92,6 @@ public class TEDialog {
         } else if (type.equals("User")) {
             username = info.get("userName") + " " + info.get("firstName") + " " + info.get("lastName");
         }
-        return new TEDialog(id, type, accessHash, username, flags);
+        return new TDialog(id, type, accessHash, username, flags);
     }
 }

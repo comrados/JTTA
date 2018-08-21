@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor.structures.results;
+package com.crawlergram.structures.results;
 
 import java.util.List;
 import java.util.Map;

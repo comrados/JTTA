@@ -7,7 +7,7 @@
 
 package com.crawlergram.preprocess;
 
-import com.crawlergram.topicextractor.structures.message.TEMessage;
+import com.crawlergram.structures.message.TMessage;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -66,9 +66,9 @@ public class Tokenizer {
      *
      * @param msgs messages
      */
-    public static List<TEMessage> tokenizeMessages(List<TEMessage> msgs) {
-        List<TEMessage> tokenized = new ArrayList<>();
-        for (TEMessage msg : msgs) {
+    public static List<TMessage> tokenizeMessages(List<TMessage> msgs) {
+        List<TMessage> tokenized = new ArrayList<>();
+        for (TMessage msg : msgs) {
             tokenized.add(tokenizeMessage(msg));
         }
         return tokenized;
@@ -79,7 +79,7 @@ public class Tokenizer {
      *
      * @param msg message
      */
-    private static TEMessage tokenizeMessage(TEMessage msg) {
+    private static TMessage tokenizeMessage(TMessage msg) {
         List<String> tokens = getSimpleTokens(msg.getText());
         tokens = getTokenCompounds(tokens);
         msg.setTokens(tokens);

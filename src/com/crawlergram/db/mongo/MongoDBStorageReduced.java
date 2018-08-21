@@ -19,8 +19,7 @@ import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.topicextractor.structures.TEDialog;
-import com.crawlergram.topicextractor.structures.message.TEMessage;
+import com.crawlergram.structures.TDialog;
 
 import java.io.*;
 import java.util.*;
@@ -315,13 +314,13 @@ public class MongoDBStorageReduced implements DBStorageReduced {
      * @param target target collection
      */
     @Override
-    public List<TEMessage> readMessages(TEDialog target) {
+    public List<Document> readMessages(TDialog target) {
         try {
-            List<TEMessage> msgs = new LinkedList<>();
+            List<Document> msgs = new LinkedList<>();
             this.setTarget(MSG_DIAL_PREF + target.getId());
             FindIterable<Document> docs = collection.find().sort(descending("_id"));
             for (Document doc : docs) {
-                msgs.add(TEMessage.topicExtractionMessageFromMongoDocument(doc));
+                msgs.add(doc);
             }
             return msgs;
         } catch (MongoException e) {
@@ -337,15 +336,15 @@ public class MongoDBStorageReduced implements DBStorageReduced {
      * @param dateTo end date
      */
     @Override
-    public List<TEMessage> readMessages(TEDialog target, int dateFrom, int dateTo) {
+    public List<Document> readMessages(TDialog target, int dateFrom, int dateTo) {
         try {
-            List<TEMessage> msgs = new LinkedList<>();
+            List<Document> msgs = new LinkedList<>();
             this.setTarget(MSG_DIAL_PREF + target.getId());
             FindIterable<Document> docs = collection
                     .find(and(gte("date", dateFrom), lte("date", dateTo)))
                     .sort(descending("_id"));
             for (Document doc : docs) {
-                msgs.add(TEMessage.topicExtractionMessageFromMongoDocument(doc));
+                msgs.add(doc);
             }
             return msgs;
         } catch (MongoException e) {
@@ -358,15 +357,15 @@ public class MongoDBStorageReduced implements DBStorageReduced {
      * returns dialogs list from respective collection
      */
     @Override
-    public List<TEDialog> getDialogs() {
+    public List<TDialog> getDialogs() {
         try {
-            List<TEDialog> dialogs = new ArrayList<>();
+            List<TDialog> dialogs = new ArrayList<>();
             this.setTarget("DIALOGS");
             FindIterable<Document> dials = collection.find();
             for (Document dial : dials) {
                 Document info = getPeerInfo((Integer) dial.get("_id"));
                 if (info != null){
-                    dialogs.add(TEDialog.topicExtractionDialogFromMongoDocument(info));
+                    dialogs.add(TDialog.topicExtractionDialogFromMongoDocument(info));
                 }
             }
             return dialogs;
