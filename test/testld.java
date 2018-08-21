@@ -10,7 +10,7 @@ import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocess.Tokenizer;
 import com.crawlergram.preprocess.liga.LIGA;
 import com.crawlergram.structures.TDialog;
-import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.message.TEMessage;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
@@ -69,7 +69,7 @@ public class testld {
         List<TDialog> dialogs = dbStorage.getDialogs();
         TDialog dialog = dialogs.get(1);
 
-        List<TMessage> msgs = TMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));
+        List<TEMessage> msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));
 
         removeEmptyMessages(msgs);
         msgs = Tokenizer.tokenizeMessages(msgs);
@@ -82,7 +82,7 @@ public class testld {
         int nonl = 0;
         int nont = 0;
 
-        for (TMessage msg: msgs){
+        for (TEMessage msg: msgs){
             String ligaLang = msg.getBestLang();
             String tikaLang = detectLanguage(msg.getText(), detector);
 
@@ -117,7 +117,7 @@ public class testld {
         System.out.println("Tika == null: " + nont);
     }
 
-    private static void removeEmptyMessages(List<TMessage> msgs) {
+    private static void removeEmptyMessages(List<TEMessage> msgs) {
         for (int i = 0; i < msgs.size(); i++) {
             if (msgs.get(i).getText().isEmpty()) {
                 msgs.remove(i);
@@ -125,8 +125,8 @@ public class testld {
         }
     }
 
-    private static void getMessageLanguages(List<TMessage> msgs, LIGA liga){
-        for (TMessage msg: msgs)
+    private static void getMessageLanguages(List<TEMessage> msgs, LIGA liga){
+        for (TEMessage msg: msgs)
             msg.setLangs(liga.classify(msg.getClearText()));
     }
 

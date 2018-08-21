@@ -11,7 +11,7 @@ import com.crawlergram.preprocess.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocess.gaussnewton.GaussNewton;
 import com.crawlergram.preprocess.gaussnewton.NoSquareException;
 import com.crawlergram.structures.TDialog;
-import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.message.TEMessage;
 import com.crawlergram.structures.message.TMessageComparator;
 
 import java.util.*;
@@ -29,9 +29,9 @@ public class MessageMergingMethods {
      * @param msgs         original messages list
      * @param docThreshold if chat has very low number of messages (< docThreshold) -> all chat is merged
      */
-    public static List<TMessage> mergeMessages(TDialog dialog,
-                                               List<TMessage> msgs,
-                                               int docThreshold) {
+    public static List<TEMessage> mergeMessages(TDialog dialog,
+                                                List<TEMessage> msgs,
+                                                int docThreshold) {
         // merging if chat, supergroup or user (placer, where subscribers write something)
         // channels (not supergroups) usually are blogs, subscribers can't post there
         // if flags' 9th bit is "1" - channel is supergroup (0001 0000 0000 = 256d)
@@ -47,7 +47,7 @@ public class MessageMergingMethods {
      * @param messages     messages
      * @param docThreshold threshold
      */
-    private static List<TMessage> mergeChat(List<TMessage> messages, int docThreshold) {
+    private static List<TEMessage> mergeChat(List<TEMessage> messages, int docThreshold) {
         // if number of messages < docThreshold - short chat, else - long chat
         return (messages.size() < docThreshold) ? mergeShortChat(messages) : mergeLongChat(messages);
     }
@@ -57,18 +57,18 @@ public class MessageMergingMethods {
      *
      * @param messages all messages
      */
-    private static List<TMessage> mergeShortChat(List<TMessage> messages) {
-        List<TMessage> merged = new LinkedList<>();
+    private static List<TEMessage> mergeShortChat(List<TEMessage> messages) {
+        List<TEMessage> merged = new LinkedList<>();
         String text = "";
-        for (TMessage message : messages) {
+        for (TEMessage message : messages) {
             if (!message.getText().isEmpty()) {
                 text += message.getText() + "\n";
             }
         }
         if (!text.isEmpty()) {
             // id and date of last message are taken
-            TMessage first = messages.get(0);
-            merged.add(new TMessage(first.getId(), text, first.getDate()));
+            TEMessage first = messages.get(0);
+            merged.add(new TEMessage(first.getId(), text, first.getDate()));
         }
         return merged;
     }
@@ -78,11 +78,11 @@ public class MessageMergingMethods {
      *
      * @param messages "clean" messages (without empty and service messages)
      */
-    private static List<TMessage> mergeLongChat(List<TMessage> messages) {
+    private static List<TEMessage> mergeLongChat(List<TEMessage> messages) {
         Collections.sort(messages, new TMessageComparator());
         // get intervals between messages to array
         List<Integer> dates = new ArrayList<>();
-        for (TMessage message : messages) {
+        for (TEMessage message : messages) {
             dates.add(message.getDate());
         }
         // deltas between intervals
@@ -119,18 +119,18 @@ public class MessageMergingMethods {
      * @param messages      documents
      * @param timeThreshold maximum time between messages in one doc
      */
-    private static List<TMessage> mergeByTime(List<TMessage> messages, int timeThreshold) {
+    private static List<TEMessage> mergeByTime(List<TEMessage> messages, int timeThreshold) {
         if (timeThreshold <= 0) {
             return mergeShortChat(messages);
         } else {
-            List<TMessage> mesCopy = new LinkedList<>(messages);
+            List<TEMessage> mesCopy = new LinkedList<>(messages);
             for (int i = 0; i < mesCopy.size() - 1; i++) {
                 // date of the current and next documents
-                TMessage d0 = mesCopy.get(i);
-                TMessage d1 = mesCopy.get(i + 1);
+                TEMessage d0 = mesCopy.get(i);
+                TEMessage d1 = mesCopy.get(i + 1);
                 // threshold criterion
                 if (d0.getDate() - d1.getDate() <= timeThreshold) {
-                    mesCopy.set(i, new TMessage(d0.getId(), d0.getText() + "\n" + d1.getText(), d0.getDate()));
+                    mesCopy.set(i, new TEMessage(d0.getId(), d0.getText() + "\n" + d1.getText(), d0.getDate()));
                     mesCopy.remove(i + 1);
                     // returns i back each time, when we have merge of the messages, to check for multiple merges in row
                     i--;
@@ -145,7 +145,7 @@ public class MessageMergingMethods {
      *
      * @param msgs messages list
      */
-    public static List<TMessage> removeEmptyMessages(List<TMessage> msgs) {
+    public static List<TEMessage> removeEmptyMessages(List<TEMessage> msgs) {
         for (int i = 0; i < msgs.size(); i++) {
             if (msgs.get(i).getText().isEmpty()) {
                 msgs.remove(i);

@@ -41,7 +41,7 @@ public class TextClassificationMain {
         Map<String, Set<String>> stopwords = new TreeMap<>();
 
         //TODO
-        //TextClassificationMethods.classifyAllDialogs(dbStorage, 0, 0, 100, false, tikaLD, stopwords);
+        TextClassificationMethods.classifyAllDialogs(dbStorage, 0, 0, 100, false, tikaLD, stopwords);
 
         // drop model and stopwords to save memory
         liga.dropModel();

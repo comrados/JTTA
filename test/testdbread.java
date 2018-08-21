@@ -7,7 +7,7 @@
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.structures.TDialog;
-import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.message.TEMessage;
 import org.bson.Document;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class testdbread {
 
         List<TDialog> dialogs = mongo.getDialogs();
         for (TDialog dialog: dialogs){ //1528134100, 1528634100
-            List<TMessage> msgs = TMessage.topicExtractionMessagesFromMongoDocuments(mongo.readMessages(dialog));
+            List<TEMessage> msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(mongo.readMessages(dialog));
             System.out.println(msgs.size());
         }
 

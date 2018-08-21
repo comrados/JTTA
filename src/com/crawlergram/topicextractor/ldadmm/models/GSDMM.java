@@ -1,7 +1,7 @@
 package com.crawlergram.topicextractor.ldadmm.models;
 
 import com.crawlergram.topicextractor.ldadmm.utility.FuncUtils;
-import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.message.TEMessage;
 import com.crawlergram.structures.results.TEResults;
 import com.crawlergram.structures.results.TEResultsParameters;
 
@@ -70,7 +70,7 @@ public class GSDMM {
      * @param inNumIterations number of iterations
      * @param inTopWords      top topic words for output
      */
-    public GSDMM(List<TMessage> msgs, int inNumTopics,
+    public GSDMM(List<TEMessage> msgs, int inNumTopics,
                  double inAlpha, double inBeta, int inNumIterations, int inTopWords) {
         alpha = inAlpha;
         beta = inBeta;
@@ -89,7 +89,7 @@ public class GSDMM {
 
         int indexWord = -1;
 
-        for (TMessage msg : msgs) {
+        for (TEMessage msg : msgs) {
             String doc = msg.getStemmedText();
             if (doc.trim().length() == 0) continue;
 

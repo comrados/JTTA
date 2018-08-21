@@ -8,7 +8,7 @@
 package com.crawlergram.preprocess;
 
 import com.crawlergram.preprocess.liga.LIGA;
-import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.message.TEMessage;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
 
@@ -35,9 +35,9 @@ public class UtilMethods {
      *
      * @param msgs original msgs object (with calculated simple and compound tokens)
      */
-    public static Map<String, String> getUniqueWords(List<TMessage> msgs) {
+    public static Map<String, String> getUniqueWords(List<TEMessage> msgs) {
         Map<String, String> uniqueWords = new TreeMap<>();
-        for (TMessage msg : msgs) {
+        for (TEMessage msg : msgs) {
             for (String token : msg.getTokens()) {
                 if (!uniqueWords.containsKey(token)) uniqueWords.put(token, null);
             }
@@ -51,8 +51,8 @@ public class UtilMethods {
      * @param msgs        messages
      * @param uniqueWords unique words
      */
-    public static void getTextFromStems(List<TMessage> msgs, Map<String, String> uniqueWords) {
-        for (TMessage msg : msgs) {
+    public static void getTextFromStems(List<TEMessage> msgs, Map<String, String> uniqueWords) {
+        for (TEMessage msg : msgs) {
             StringBuilder stemmedText = new StringBuilder();
             List<String> tokens = msg.getTokens();
             for (String token : tokens) {
@@ -68,21 +68,22 @@ public class UtilMethods {
      * @param msgs messages
      * @param lang language identification model
      */
-    public static void getMessageLanguages(List<TMessage> msgs, Object lang) {
+    public static List<TEMessage> getMessageLanguages(List<TEMessage> msgs, Object lang) {
         if (lang instanceof LIGA) {
-            for (TMessage msg : msgs)
+            for (TEMessage msg : msgs)
                 msg.setLangs(((LIGA) lang).classify(msg.getClearText()));
         }
         if ((lang instanceof LanguageDetector)) {
-            for (TMessage msg : msgs) {
+            for (TEMessage msg : msgs) {
                 Map<String, Double> langs = new TreeMap<>();
                 LanguageResult result = ((LanguageDetector) lang).detect(msg.getClearText());
                 if (!result.isUnknown()) {
                     langs.put(result.getLanguage(), (double) result.getRawScore());
                 }
+                msg.setLangs(langs);
             }
         }
-
+        return msgs;
     }
 
     /**
@@ -92,13 +93,13 @@ public class UtilMethods {
      * @param stopwords stopwords
      * @param bestLang  best language of dialog
      */
-    public static void removeStopWords(List<TMessage> msgs, Map<String, Set<String>> stopwords,
-                                       String bestLang, double langsRatio) {
+    public static List<TEMessage> removeStopWords(List<TEMessage> msgs, Map<String, Set<String>> stopwords,
+                                                  String bestLang, double langsRatio) {
         // loads best lang
         if (!bestLang.equals("UNKNOWN") && !stopwords.containsKey(bestLang))
             stopwords.put(bestLang, loadStopWords(bestLang));
         // checks msgs
-        for (TMessage msg : msgs) {
+        for (TEMessage msg : msgs) {
             String lang = msg.getBestLang();
             // load stopwords for "lang" if only they're not loaded before
             if (!stopwords.containsKey(lang))
@@ -120,6 +121,7 @@ public class UtilMethods {
                 }
             }
         }
+        return msgs;
     }
 
     /**
@@ -144,12 +146,12 @@ public class UtilMethods {
      * @param msgs       messages
      * @param threshhold min threshold of popularity
      */
-    public static String getDialogsBestLang(List<TMessage> msgs, double threshhold) {
+    public static String getDialogsBestLang(List<TEMessage> msgs, double threshhold) {
         Integer totalCount = 0;
         Integer bestCount = -1;
         String bestLang = "UNKNOWN";
         Map<String, Integer> langsCounts = new HashMap<>();
-        for (TMessage msg : msgs) {
+        for (TEMessage msg : msgs) {
             String bestlang = msg.getBestLang();
             if (!langsCounts.containsKey(bestlang)) langsCounts.put(bestlang, 0);
             langsCounts.put(bestlang, langsCounts.get(bestlang) + 1);
@@ -161,7 +163,7 @@ public class UtilMethods {
             }
             totalCount += count.getValue();
         }
-        if ((totalCount > 0) && ((bestCount / totalCount) >= threshhold)) {
+        if ((totalCount > 0) && ((bestCount / (double) totalCount) >= threshhold)) {
             return bestLang;
         } else {
             return "UNKNOWN";

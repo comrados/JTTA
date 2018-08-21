@@ -1,6 +1,6 @@
 /*
- * Title: TopicExtractionMessage.java
- * Project: telegramJ
+ * Title: TTEMessage.java
+ * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
  */
@@ -9,33 +9,25 @@ package com.crawlergram.structures.message;
 
 import org.bson.Document;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TMessage {
 
-    private Integer id;
-    private String text;
-    private String stemmedText;
-    private Integer date;
-    private List<String> tokens;
-    private Map<String, Double> langs;
+    protected Integer id;
+    protected String text;
+    protected Integer date;
 
     public TMessage() {
         this.id = 0;
         this.text = "";
-        this.stemmedText = null;
         this.date = 0;
-        this.tokens = new ArrayList<>();
-        this.langs = new TreeMap<>();
     }
 
     public TMessage(Integer id, String text, Integer date) {
         this.id = id;
         this.text = text;
-        this.stemmedText = null;
         this.date = date;
-        this.tokens = new ArrayList<>();
-        this.langs = new TreeMap<>();
     }
 
     public Integer getId() {
@@ -54,14 +46,6 @@ public class TMessage {
         this.text = text;
     }
 
-    public String getStemmedText() {
-        return stemmedText;
-    }
-
-    public void setStemmedText(String stemmedText) {
-        this.stemmedText = stemmedText;
-    }
-
     public Integer getDate() {
         return date;
     }
@@ -70,52 +54,13 @@ public class TMessage {
         this.date = date;
     }
 
-    public List<String> getTokens() {
-        return tokens;
-    }
-
-    public void setTokens(List<String> tokens) {
-        this.tokens = tokens;
-    }
-
-    public Map<String, Double> getLangs() {
-        return langs;
-    }
-
-    public void setLangs(Map<String, Double> langs) {
-        this.langs = langs;
-    }
-
-    /**
-     * Converts tokens back to the text ("clear" text)
-     */
-    public String getClearText() {
-        StringBuilder text = new StringBuilder();
-        for (String token: tokens)
-            text.append(token).append(" ");
-        return text.toString().trim();
-    }
-
-    public String getBestLang() {
-        Double bestScore = -1.0;
-        String bestLang = "UNKNOWN";
-        // Get the best score or return unknown
-        if (!langs.isEmpty())
-            for (Map.Entry<String, Double> score : langs.entrySet())
-                if (score.getValue() > bestScore){
-                    bestScore = score.getValue();
-                    bestLang = score.getKey();
-                }
-        return bestLang;
-    }
-
     /**
      * Converts mongoDB's document to TEM (extracts text of message or media's caption)
      * Strings are set converted to lowercase
      *
      * @param doc document
      */
-    public static TMessage topicExtractionMessageFromMongoDocument(Document doc) {
+    public static TMessage telegramMessageFromMongoDocument(Document doc) {
         if (doc.get("class").equals("Message")) {
             Integer id = (Integer) doc.get("_id");
             Integer date = (Integer) doc.get("date");
@@ -135,10 +80,10 @@ public class TMessage {
      *
      * @param docs documents
      */
-    public static List<TMessage> topicExtractionMessagesFromMongoDocuments(List<Document> docs) {
+    public static List<TMessage> telegramMessagesFromMongoDocuments(List<Document> docs) {
         List<TMessage> msgs = new ArrayList<>();
         for (Document doc: docs){
-            msgs.add(topicExtractionMessageFromMongoDocument(doc));
+            msgs.add(telegramMessageFromMongoDocument(doc));
         }
         return msgs;
     }
@@ -148,7 +93,7 @@ public class TMessage {
      *
      * @param doc document
      */
-    private static String getMediaCaption(Document doc) {
+    public static String getMediaCaption(Document doc) {
         if (doc != null) {
             if (doc.get("class").equals("MessageMediaDocument")) {
                 return (String) doc.get("caption");

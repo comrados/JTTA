@@ -15,7 +15,7 @@ import com.crawlergram.preprocess.gras.GRAS;
 import com.crawlergram.topicextractor.ldadmm.models.GSDMM;
 import com.crawlergram.topicextractor.ldadmm.models.GSLDA;
 import com.crawlergram.structures.TDialog;
-import com.crawlergram.structures.message.TMessage;
+import com.crawlergram.structures.message.TEMessage;
 import com.crawlergram.structures.results.TEResults;
 
 import java.io.*;
@@ -64,12 +64,12 @@ public class TopicExtractionMethods {
     public static void getTopicsForOneDialog(DBStorageReduced dbStorage, TDialog dialog, int dateFrom, int dateTo,
                                              int docThreshold, boolean msgMerging, Object lang,
                                              Map<String, Set<String>> stopwords) {
-        List<TMessage> msgs;
+        List<TEMessage> msgs;
         // if dates valid - get only messages between these dates, otherwise - get all messages
         if (UtilMethods.datesCheck(dateFrom, dateTo)) {
-            msgs = TMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog, dateFrom, dateTo));
+            msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog, dateFrom, dateTo));
         } else {
-            msgs = TMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));
+            msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));
         }
         // check if resulting list is not empty
         if ((msgs != null) && !msgs.isEmpty()) {
@@ -86,7 +86,7 @@ public class TopicExtractionMethods {
 
             Map<String, String> uniqueWords = UtilMethods.getUniqueWords(msgs);
             uniqueWords = GRAS.doStemming(uniqueWords, 5, 4, 0.8);
-            UtilMethods.getTextFromStems(msgs, uniqueWords);
+            UtilMethods.getTextFromStems( msgs, uniqueWords);
 
             GSDMM dmm = new GSDMM(msgs, 10, 0.1, 0.1, 1000, 10);
             TEResults resDMM = dmm.inference();
@@ -115,7 +115,7 @@ public class TopicExtractionMethods {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private static void statUtils(List<TMessage> msgs, Map<String, String> uniqueWords) {
+    private static void statUtils(List<TEMessage> msgs, Map<String, String> uniqueWords) {
         System.out.println();
         System.out.println("Number of documents: " + msgs.size());
         double l = calcL(uniqueWords);
@@ -145,10 +145,10 @@ public class TopicExtractionMethods {
         return totalL / n;
     }
 
-    private static double calcAv(List<TMessage> msgs) {
+    private static double calcAv(List<TEMessage> msgs) {
         double totalAv = 0.0;
         int n = msgs.size();
-        for (TMessage msg : msgs) {
+        for (TEMessage msg : msgs) {
             totalAv += msg.getTokens().size();
         }
         System.out.println("Valid tokens per document: " + String.format("%.2f", totalAv / n));
@@ -171,10 +171,10 @@ public class TopicExtractionMethods {
         System.out.println("----------------------------------------------------------");
     }
 
-    private static void getLangStats(List<TMessage> msgs){
+    private static void getLangStats(List<TEMessage> msgs){
         Map<String, Integer> langsTotal = new HashMap<>();
         Map<String, Integer> langsPop = new HashMap<>();
-        for (TMessage msg: msgs){
+        for (TEMessage msg: msgs){
             Set<String> langs = msg.getLangs().keySet();
             for (String lang: langs){
                 if (!langsTotal.containsKey(lang)) langsTotal.put(lang, 0);
