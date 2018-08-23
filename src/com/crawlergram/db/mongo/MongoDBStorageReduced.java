@@ -19,7 +19,7 @@ import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.preprocessing.TDialog;
 
 import java.io.*;
 import java.util.*;
@@ -314,9 +314,9 @@ public class MongoDBStorageReduced implements DBStorageReduced {
      * @param target target collection
      */
     @Override
-    public List<Document> readMessages(TDialog target) {
+    public List<Object> readMessages(TDialog target) {
         try {
-            List<Document> msgs = new LinkedList<>();
+            List<Object> msgs = new LinkedList<>();
             this.setTarget(MSG_DIAL_PREF + target.getId());
             FindIterable<Document> docs = collection.find().sort(descending("_id"));
             for (Document doc : docs) {
@@ -336,39 +336,43 @@ public class MongoDBStorageReduced implements DBStorageReduced {
      * @param dateTo end date
      */
     @Override
-    public List<Document> readMessages(TDialog target, int dateFrom, int dateTo) {
-        try {
-            List<Document> msgs = new LinkedList<>();
-            this.setTarget(MSG_DIAL_PREF + target.getId());
-            FindIterable<Document> docs = collection
-                    .find(and(gte("date", dateFrom), lte("date", dateTo)))
-                    .sort(descending("_id"));
-            for (Document doc : docs) {
-                msgs.add(doc);
+    public List<Object> readMessages(TDialog target, int dateFrom, int dateTo) {
+        if (((dateFrom == 0) && (dateTo == 0)) || (dateFrom > dateTo))
+            return readMessages(target);
+        else
+            try {
+                List<Object> msgs = new LinkedList<>();
+                this.setTarget(MSG_DIAL_PREF + target.getId());
+                FindIterable<Document> docs = collection
+                        .find(and(gte("date", dateFrom), lte("date", dateTo)))
+                        .sort(descending("_id"));
+                for (Document doc : docs) {
+                    msgs.add(doc);
+                }
+                return msgs;
+            } catch (MongoException e) {
+                System.err.println(e.getCode() + " " + e.getMessage());
+                return null;
             }
-            return msgs;
-        } catch (MongoException e) {
-            System.err.println(e.getCode() + " " + e.getMessage());
-            return null;
-        }
     }
 
     /**
      * returns dialogs list from respective collection
      */
     @Override
-    public List<TDialog> getDialogs() {
+    public List<Object> getDialogs() {
         try {
-            List<TDialog> dialogs = new ArrayList<>();
+            List<Object> chats = new ArrayList<>();
+            // DIALOGS contain only active dialogs
             this.setTarget("DIALOGS");
             FindIterable<Document> dials = collection.find();
+            // CHATS contain all found chats and additional info
+            this.setTarget("CHATS");
             for (Document dial : dials) {
-                Document info = getPeerInfo((Integer) dial.get("_id"));
-                if (info != null){
-                    dialogs.add(TDialog.topicExtractionDialogFromMongoDocument(info));
-                }
+                FindIterable<Document> chat = collection.find(eq("_id", dial.get("_id")));
+                chats.add(chat.first());
             }
-            return dialogs;
+            return chats;
         } catch (MongoException e) {
             System.err.println(e.getCode() + " " + e.getMessage());
             return null;

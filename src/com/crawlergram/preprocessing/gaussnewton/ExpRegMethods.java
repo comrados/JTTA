@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocess.gaussnewton;
+package com.crawlergram.preprocessing.gaussnewton;
 
 import java.util.ArrayList;
 import java.util.List;

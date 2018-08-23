@@ -7,8 +7,7 @@
 
 package com.crawlergram.db;
 
-import com.crawlergram.structures.TDialog;
-import org.bson.Document;
+import com.crawlergram.preprocessing.TDialog;
 
 import java.util.List;
 
@@ -61,7 +60,7 @@ public interface DBStorageReduced {
      * reads all messages from DB
      * @param target target dialog
      */
-    List<Document> readMessages(TDialog target);
+    List<Object> readMessages(TDialog target);
 
     /**
      * reads messages between two dates from DB
@@ -69,12 +68,12 @@ public interface DBStorageReduced {
      * @param dateFrom date from
      * @param dateTo date to
      */
-    List<Document> readMessages(TDialog target, int dateFrom, int dateTo);
+    List<Object> readMessages(TDialog target, int dateFrom, int dateTo);
 
     /**
      * returns dialogs list
      */
-    List<TDialog> getDialogs();
+    List<Object> getDialogs();
 
     /**
      * saves files from DB to HDD

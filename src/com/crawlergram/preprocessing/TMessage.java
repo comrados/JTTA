@@ -5,18 +5,21 @@
  * 2018
  */
 
-package com.crawlergram.structures.message;
+package com.crawlergram.preprocessing;
 
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TMessage {
 
     protected Integer id;
     protected String text;
     protected Integer date;
+    protected List<String> tokens = null;
+    protected Map<String, Double> langs = null;
 
     public TMessage() {
         this.id = 0;
@@ -28,6 +31,14 @@ public class TMessage {
         this.id = id;
         this.text = text;
         this.date = date;
+    }
+
+    public TMessage(Integer id, String text, Integer date, List<String> tokens, Map<String, Double> langs) {
+        this.id = id;
+        this.text = text;
+        this.date = date;
+        this.tokens = tokens;
+        this.langs = langs;
     }
 
     public Integer getId() {
@@ -54,13 +65,29 @@ public class TMessage {
         this.date = date;
     }
 
+    public List<String> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<String> tokens) {
+        this.tokens = tokens;
+    }
+
+    public Map<String, Double> getLangs() {
+        return langs;
+    }
+
+    public void setLangs(Map<String, Double> langs) {
+        this.langs = langs;
+    }
+
     /**
      * Converts mongoDB's document to TEM (extracts text of message or media's caption)
      * Strings are set converted to lowercase
      *
      * @param doc document
      */
-    public static TMessage telegramMessageFromMongoDocument(Document doc) {
+    public static TMessage tMessageFromMongoDoc(Document doc) {
         if (doc.get("class").equals("Message")) {
             Integer id = (Integer) doc.get("_id");
             Integer date = (Integer) doc.get("date");
@@ -75,15 +102,30 @@ public class TMessage {
     }
 
     /**
+     * Converts tokens back to the text ("clear" text)
+     */
+    public String getClearText() {
+        if (!tokens.isEmpty()){
+            StringBuilder text = new StringBuilder();
+            for (String token: tokens)
+                text.append(token).append(" ");
+            return text.toString().trim();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Converts mongoDB's documents to TEM (extracts text of message or media's caption)
      * Strings are set converted to lowercase
      *
      * @param docs documents
      */
-    public static List<TMessage> telegramMessagesFromMongoDocuments(List<Document> docs) {
+    public static List<TMessage> tMessagesFromDB(List<Object> docs) {
         List<TMessage> msgs = new ArrayList<>();
-        for (Document doc: docs){
-            msgs.add(telegramMessageFromMongoDocument(doc));
+        for (Object doc: docs){
+            if (doc instanceof Document)
+                msgs.add(tMessageFromMongoDoc((Document) doc));
         }
         return msgs;
     }
@@ -109,6 +151,19 @@ public class TMessage {
         } else {
             return "";
         }
+    }
+
+    public String getBestLang() {
+        Double bestScore = -1.0;
+        String bestLang = "UNKNOWN";
+        // Get the best score or return unknown
+        if (!langs.isEmpty())
+            for (Map.Entry<String, Double> score : langs.entrySet())
+                if (score.getValue() > bestScore){
+                    bestScore = score.getValue();
+                    bestLang = score.getKey();
+                }
+        return bestLang;
     }
 
 }

@@ -7,15 +7,16 @@
 
 package com.crawlergram.structures.message;
 
+import com.crawlergram.preprocessing.TMessage;
 import org.bson.Document;
 
 import java.util.*;
 
-public class TEMessage extends TMessage{
+public class TEMessage extends TMessage {
 
-    private String stemmedText = null;
-    private List<String> tokens = null;
-    private Map<String, Double> langs = null;
+    protected String stemmedText = null;
+    protected List<String> tokens = null;
+    protected Map<String, Double> langs = null;
 
     public TEMessage() {
         super();
@@ -30,36 +31,12 @@ public class TEMessage extends TMessage{
         this.langs = new TreeMap<>();
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public String getStemmedText() {
         return stemmedText;
     }
 
     public void setStemmedText(String stemmedText) {
         this.stemmedText = stemmedText;
-    }
-
-    public Integer getDate() {
-        return date;
-    }
-
-    public void setDate(Integer date) {
-        this.date = date;
     }
 
     public List<String> getTokens() {
@@ -102,14 +79,15 @@ public class TEMessage extends TMessage{
     }
 
     public static TEMessage topicExtractionMessageMessageFromMongoDocument(Document doc) {
-        TMessage msg = telegramMessageFromMongoDocument(doc);
+        TMessage msg = tMessageFromMongoDoc(doc);
         return new TEMessage(msg.getId(), msg.getText(), msg.getDate());
     }
 
-    public static List<TEMessage> topicExtractionMessagesFromMongoDocuments(List<Document> docs) {
+    public static List<TEMessage> topicExtractionMessagesFromMongoDocuments(List<Object> docs) {
         List<TEMessage> msgs = new ArrayList<>();
-        for (Document doc: docs){
-            msgs.add(topicExtractionMessageMessageFromMongoDocument(doc));
+        for (Object doc: docs){
+            if (doc instanceof Document)
+                msgs.add(topicExtractionMessageMessageFromMongoDocument((Document) doc));
         }
         return msgs;
     }

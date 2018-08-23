@@ -12,9 +12,10 @@ import com.crawlergram.preprocess.MessageMergingMethods;
 import com.crawlergram.preprocess.Tokenizer;
 import com.crawlergram.preprocess.UtilMethods;
 import com.crawlergram.preprocess.gras.GRAS;
+import com.crawlergram.preprocessing.TMessage;
 import com.crawlergram.topicextractor.ldadmm.models.GSDMM;
 import com.crawlergram.topicextractor.ldadmm.models.GSLDA;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.preprocessing.TDialog;
 import com.crawlergram.structures.message.TEMessage;
 import com.crawlergram.structures.results.TEResults;
 
@@ -38,7 +39,7 @@ public class TopicExtractionMethods {
     public static void getTopicsForAllDialogs(DBStorageReduced dbStorage, int dateFrom, int dateTo, int docThreshold,
                                               boolean msgMerging, Object lang, Map<String, Set<String>> stopwords) {
         // get all dialogs
-        List<TDialog> dialogs = dbStorage.getDialogs();
+        List<TDialog> dialogs = TDialog.telegramDialogsFromDB(dbStorage.getDialogs());
         if ((dialogs != null) && (!dialogs.isEmpty())) {
             for (TDialog dialog : dialogs) {
                 // do for one
@@ -64,38 +65,39 @@ public class TopicExtractionMethods {
     public static void getTopicsForOneDialog(DBStorageReduced dbStorage, TDialog dialog, int dateFrom, int dateTo,
                                              int docThreshold, boolean msgMerging, Object lang,
                                              Map<String, Set<String>> stopwords) {
-        List<TEMessage> msgs;
+        List<TEMessage> temsgs;
+        List<TMessage> msgs;
         // if dates valid - get only messages between these dates, otherwise - get all messages
         if (UtilMethods.datesCheck(dateFrom, dateTo)) {
-            msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog, dateFrom, dateTo));
+            msgs = TMessage.tMessagesFromDB(dbStorage.readMessages(dialog, dateFrom, dateTo));
         } else {
-            msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));
+            msgs = TMessage.tMessagesFromDB(dbStorage.readMessages(dialog));
         }
         // check if resulting list is not empty
         if ((msgs != null) && !msgs.isEmpty()) {
             if (msgMerging) msgs = MessageMergingMethods.mergeMessages(dialog, msgs, docThreshold);
             msgs = MessageMergingMethods.removeEmptyMessages(msgs);
-            msgs = Tokenizer.tokenizeMessages(msgs);
 
-            UtilMethods.getMessageLanguages(msgs, lang);
+            temsgs = initTEMsgs(msgs);
+            temsgs = Tokenizer.tokenizeMessages(temsgs);
+            UtilMethods.getMessageLanguages(temsgs, lang);
 
-            String bestLang = UtilMethods.getDialogsBestLang(msgs, 0.8);
-            //getLangStats(msgs);
+            String bestLang = UtilMethods.getDialogsBestLang(temsgs, 0.8);
+            //getLangStats(temsgs);
+            UtilMethods.removeStopWords(temsgs, stopwords, bestLang, 0.9);
+            Map<String, String> uniqueWords = UtilMethods.getUniqueWords(temsgs);
 
-            UtilMethods.removeStopWords(msgs, stopwords, bestLang, 0.9);
-
-            Map<String, String> uniqueWords = UtilMethods.getUniqueWords(msgs);
             uniqueWords = GRAS.doStemming(uniqueWords, 5, 4, 0.8);
-            UtilMethods.getTextFromStems( msgs, uniqueWords);
+            UtilMethods.getTextFromStems( temsgs, uniqueWords);
 
-            GSDMM dmm = new GSDMM(msgs, 10, 0.1, 0.1, 1000, 10);
+            GSDMM dmm = new GSDMM(temsgs, 10, 0.1, 0.1, 1000, 10);
             TEResults resDMM = dmm.inference();
 
-            GSLDA lda = new GSLDA(msgs, 10, 0.01, 0.1, 1000, 10);
+            GSLDA lda = new GSLDA(temsgs, 10, 0.01, 0.1, 1000, 10);
             TEResults resLDA = lda.inference();
 
             //print some stats
-            statUtils(msgs, uniqueWords);
+            statUtils(temsgs, uniqueWords);
 
             printTopWords(resDMM);
             printTopWords(resLDA);
@@ -109,6 +111,15 @@ public class TopicExtractionMethods {
         } else {
             System.out.println("EMPTY MESSAGES: " + dialog.getId() + " " + dialog.getUsername());
         }
+    }
+
+    private static List<TEMessage> initTEMsgs(List<TMessage> msgs){
+        List<TEMessage> temsgs = new ArrayList<>();
+        for (TMessage msg: msgs){
+            temsgs.add(new TEMessage(msg.getId(), msg.getText(), msg.getDate()));
+        }
+        msgs.clear();
+        return temsgs;
     }
 
 

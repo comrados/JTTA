@@ -6,7 +6,7 @@
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.preprocessing.TDialog;
 import com.crawlergram.structures.message.TEMessage;
 import org.bson.Document;
 
@@ -23,7 +23,7 @@ public class testdbread {
         // User "telegramJ" - db.createUser({user: "telegramJ", pwd: "cart", roles: [{ role: "readWrite", db: "telegram" }]})
         MongoDBStorageReduced mongo = new MongoDBStorageReduced("telegramJ", "telegram", "cart", "localhost", 27017, "fs");
 
-        List<TDialog> dialogs = mongo.getDialogs();
+        List<TDialog> dialogs = TDialog.telegramDialogsFromDB(mongo.getDialogs());
         for (TDialog dialog: dialogs){ //1528134100, 1528634100
             List<TEMessage> msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(mongo.readMessages(dialog));
             System.out.println(msgs.size());

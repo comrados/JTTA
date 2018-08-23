@@ -9,7 +9,7 @@ import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocess.Tokenizer;
 import com.crawlergram.preprocess.liga.LIGA;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.preprocessing.TDialog;
 import com.crawlergram.structures.message.TEMessage;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
@@ -66,7 +66,7 @@ public class testld {
         System.out.println(liga.classify(en3));
         */
 
-        List<TDialog> dialogs = dbStorage.getDialogs();
+        List<TDialog> dialogs = TDialog.telegramDialogsFromDB(dbStorage.getDialogs());
         TDialog dialog = dialogs.get(1);
 
         List<TEMessage> msgs = TEMessage.topicExtractionMessagesFromMongoDocuments(dbStorage.readMessages(dialog));

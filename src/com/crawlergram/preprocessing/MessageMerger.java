@@ -1,22 +1,37 @@
 /*
- * Title: MessageMergingMethods.java
+ * Title: MessageMerger.java
  * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
  */
 
-package com.crawlergram.preprocess;
+package com.crawlergram.preprocessing;
 
 import com.crawlergram.preprocessing.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocessing.gaussnewton.GaussNewton;
 import com.crawlergram.preprocessing.gaussnewton.NoSquareException;
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
 import com.crawlergram.structures.message.TMessageComparator;
 
 import java.util.*;
 
-public class MessageMergingMethods {
+public class MessageMerger implements Preprocessor {
+
+    private static int docThreshold; // default - 100 (see MessageMergerBuilder)
+    private static TDialog dialog;
+
+    public int getDocThreshold() {
+        return docThreshold;
+    }
+
+    public void setDocThreshold(int threshold) {
+        docThreshold = threshold;
+    }
+
+    MessageMerger(MessageMergerBuilder builder){
+        docThreshold = builder.docThreshold;
+        dialog = builder.dialog;
+    }
+
 
     /**
      * Merges short messages of supergroups and chats to larger messages (merges by topic).
@@ -24,65 +39,54 @@ public class MessageMergingMethods {
      * If two messages were written in a short time interval they are likely to have the same context or topic.
      * Such messages can be used to define most popular topics of the chat (e.g. sport, news, etc.).
      * We need to merge only messages from Chats, supergroups (type of Channels) and Users.
-     *
-     * @param dialog       dialog
-     * @param msgs         original messages list
-     * @param docThreshold if chat has very low number of messages (< docThreshold) -> all chat is merged
      */
-    public static List<TMessage> mergeMessages(TDialog dialog,
-                                                List<TMessage> msgs,
-                                                int docThreshold) {
+    @Override
+    public List<TMessage> run() {
         // merging if chat, supergroup or user (placer, where subscribers write something)
         // channels (not supergroups) usually are blogs, subscribers can't post there
         // if flags' 9th bit is "1" - channel is supergroup (0001 0000 0000 = 256d)
-        if (!(dialog.getType().equals("Channel") && ((dialog.getFlags() & 256) == 0) && (msgs.size() > 0))) {
-            msgs = mergeChat(msgs, docThreshold);
+        if (!(dialog.getType().equals("Channel") && ((dialog.getFlags() & 256) == 0) &&
+                (dialog.getMessages().size() > 0))) {
+            dialog.setMessages(mergeChat());
         }
-        return msgs;
+        return removeEmptyMessages(dialog.getMessages());
     }
 
     /**
      * merges (long snd short) chats to docs
-     *
-     * @param messages     messages
-     * @param docThreshold threshold
      */
-    private static List<TMessage> mergeChat(List<TMessage> messages, int docThreshold) {
+    private static List<TMessage> mergeChat() {
         // if number of messages < docThreshold - short chat, else - long chat
-        return (messages.size() < docThreshold) ? mergeShortChat(messages) : mergeLongChat(messages);
+        return (dialog.getMessages().size() < docThreshold) ? mergeShortChat() : mergeLongChat();
     }
 
     /**
      * merges short chat messages (number of messages < threshold) to one message
-     *
-     * @param messages all messages
      */
-    private static List<TMessage> mergeShortChat(List<TMessage> messages) {
+    private static List<TMessage> mergeShortChat() {
         List<TMessage> merged = new LinkedList<>();
-        String text = "";
-        for (TMessage message : messages) {
+        StringBuilder text = new StringBuilder();
+        for (TMessage message : dialog.getMessages()) {
             if (!message.getText().isEmpty()) {
-                text += message.getText() + "\n";
+                text.append(message.getText()).append("\n");
             }
         }
-        if (!text.isEmpty()) {
+        if (text.length() > 0) {
             // id and date of last message are taken
-            TMessage first = messages.get(0);
-            merged.add(new TMessage(first.getId(), text, first.getDate()));
+            TMessage first = dialog.getMessages().get(0);
+            merged.add(new TMessage(first.getId(), text.toString().trim(), first.getDate(), first.getTokens(), first.getLangs()));
         }
         return merged;
     }
 
     /**
      * merges long chat messages (number of messages > threshold) if they fit time interval
-     *
-     * @param messages "clean" messages (without empty and service messages)
      */
-    private static List<TMessage> mergeLongChat(List<TMessage> messages) {
-        Collections.sort(messages, new TMessageComparator());
+    private static List<TMessage> mergeLongChat() {
+        Collections.sort(dialog.getMessages(), new TMessageComparator());
         // get intervals between messages to array
         List<Integer> dates = new ArrayList<>();
-        for (TMessage message : messages) {
+        for (TMessage message : dialog.getMessages()) {
             dates.add(message.getDate());
         }
         // deltas between intervals
@@ -110,27 +114,26 @@ public class MessageMergingMethods {
         }
         int timeThreshold = (int) Math.ceil(ExpRegMethods.mathTimeThresholdCount(expModel[1], 0.01));
         // returns the list of merged documents
-        return mergeByTime(messages, timeThreshold);
+        return mergeByTime(timeThreshold);
     }
 
     /**
      * concatenates messages to one, if delta time between them is lower than time threshold
      *
-     * @param messages      documents
      * @param timeThreshold maximum time between messages in one doc
      */
-    private static List<TMessage> mergeByTime(List<TMessage> messages, int timeThreshold) {
+    private static List<TMessage> mergeByTime(int timeThreshold) {
         if (timeThreshold <= 0) {
-            return mergeShortChat(messages);
+            return mergeShortChat();
         } else {
-            List<TMessage> mesCopy = new LinkedList<>(messages);
+            List<TMessage> mesCopy = new LinkedList<>(dialog.getMessages());
             for (int i = 0; i < mesCopy.size() - 1; i++) {
                 // date of the current and next documents
                 TMessage d0 = mesCopy.get(i);
                 TMessage d1 = mesCopy.get(i + 1);
                 // threshold criterion
                 if (d0.getDate() - d1.getDate() <= timeThreshold) {
-                    mesCopy.set(i, new TMessage(d0.getId(), d0.getText() + "\n" + d1.getText(), d0.getDate()));
+                    mesCopy.set(i, new TMessage(d0.getId(), (d0.getText() + "\n" + d1.getText()).trim(), d0.getDate(), d0.getTokens(), d0.getLangs()));
                     mesCopy.remove(i + 1);
                     // returns i back each time, when we have merge of the messages, to check for multiple merges in row
                     i--;
@@ -152,6 +155,25 @@ public class MessageMergingMethods {
             }
         }
         return msgs;
+    }
+
+    public static class MessageMergerBuilder {
+
+        private int docThreshold = 100;
+        private TDialog dialog;
+
+        public MessageMergerBuilder setDocThreshold(int docThreshold) {
+            this.docThreshold = docThreshold;
+            return this;
+        }
+
+        MessageMergerBuilder(TDialog dialog) {
+            this.dialog = dialog;
+        }
+
+        public MessageMerger build() {
+            return new MessageMerger(this);
+        }
     }
 
 }

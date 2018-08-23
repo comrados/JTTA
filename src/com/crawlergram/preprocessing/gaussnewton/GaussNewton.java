@@ -4,7 +4,7 @@
  * https://www.codeproject.com/Articles/1175992/Implementation-of-Gauss-Newton-Algorithm-in-Java
  */
 
-package com.crawlergram.preprocess.gaussnewton;
+package com.crawlergram.preprocessing.gaussnewton;
 
 import java.util.stream.IntStream;
 
