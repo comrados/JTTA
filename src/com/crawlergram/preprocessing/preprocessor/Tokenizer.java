@@ -5,9 +5,10 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.structures.message.TEMessage;
+import com.crawlergram.preprocessing.TDialog;
+import com.crawlergram.preprocessing.TMessage;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -29,14 +30,16 @@ public class Tokenizer implements Preprocessor {
     final private static String HEX = "^([0]+x)[0-9a-f]+$"; // hexadecimal 0xCAFE1 (doesn't match words like ABBA or CAFE)
     final private static String CHAR_FILTER = "[^\u0000-\u1FFF]"; // filters all the characters that fall out this list
 
-    private static TDialog dialog;
+    private int minTokenLength;
+    private int maxTokenLength;
 
     public Tokenizer(TokenizerBuilder builder){
-        dialog = builder.dialog;
+        this.maxTokenLength = builder.maxTokenLength;
+        this.minTokenLength = builder.minTokenLength;
     }
 
     @Override
-    public List<TMessage> run() {
+    public List<TMessage> run(TDialog dialog) {
         List<TMessage> tokenized = new ArrayList<>();
         for (TMessage msg : dialog.getMessages()) {
             msg.setTokens(tokenizeToList(msg.getText()));
@@ -49,7 +52,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param text original text
      */
-    public static List<String> tokenizeToList(String text) {
+    public List<String> tokenizeToList(String text) {
         List<String> tokens = getSimpleTokens(text);
         return getTokenCompounds(tokens);
     }
@@ -59,7 +62,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param text original text
      */
-    public static String preprocess(String text) {
+    public String preprocess(String text) {
         List<String> pureTokens = tokenizeToList(text);
         StringBuilder output = new StringBuilder();
         for (String token : pureTokens)
@@ -72,7 +75,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param text original text
      */
-    public static String[] tokenizeToArray(String text) {
+    public String[] tokenizeToArray(String text) {
         List<String> tokens = tokenizeToList(text);
         String[] arr = new String[tokens.size()];
         return tokens.toArray(arr);
@@ -84,7 +87,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param text original message text
      */
-    private static List<String> getSimpleTokens(String text) {
+    private List<String> getSimpleTokens(String text) {
         String[] tokensA = text.split("\\s+");
         List<String> tokens = new LinkedList<>();
         for (String token : tokensA) {
@@ -100,7 +103,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param tokens simple tokens
      */
-    private static List<String> getTokenCompounds(List<String> tokens) {
+    private List<String> getTokenCompounds(List<String> tokens) {
         List<String> tokensL = new LinkedList<>();
         for (String token : tokens) {
             String[] tokensA = token.split(PUNCT);
@@ -119,11 +122,11 @@ public class Tokenizer implements Preprocessor {
      *
      * @param token original token
      */
-    private static boolean tokenCheck(String token) {
+    private boolean tokenCheck(String token) {
         return !token.isEmpty()
                 && !tokenIsLink(token)
                 && !tokenIsNumber(token.replaceAll(PUNCT, ""))
-                && !tokensLengthIsNotOk(token, 2, 30);
+                && !tokensLengthIsNotOk(token, this.minTokenLength, this.maxTokenLength);
     }
 
     /**
@@ -131,7 +134,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param token original token
      */
-    private static boolean tokenIsLink(String token) {
+    private boolean tokenIsLink(String token) {
         // http(s), www, ftp links
         String p1 = ".*(http://|https://|ftp://|file://|mailto:|nfs://|irc://|ssh://|telnet://|www\\.).+";
         // short links of type: youtube.com & youtube.com/watch?v=oHg5SJYRHA0
@@ -144,7 +147,7 @@ public class Tokenizer implements Preprocessor {
     /**
      * checks if token can be casted into double
      */
-    private static boolean tokenIsNumber(String token) {
+    private boolean tokenIsNumber(String token) {
         try {
             Double.parseDouble(token);
             return true;
@@ -160,7 +163,7 @@ public class Tokenizer implements Preprocessor {
      * @param min   minimal length of token (inclusive)
      * @param max   maximal length of token (inclusive)
      */
-    private static boolean tokensLengthIsNotOk(String token, int min, int max) {
+    private boolean tokensLengthIsNotOk(String token, int min, int max) {
         return !((token.length() <= max) && (token.length() >= min));
     }
 
@@ -169,7 +172,7 @@ public class Tokenizer implements Preprocessor {
      *
      * @param token token
      */
-    private static String compoundTokenEdit(String token) {
+    private String compoundTokenEdit(String token) {
         String temp = token.toLowerCase();
         temp = temp.replaceAll(CHAR_FILTER, ""); //removes redundant characters, emoticons and so on
         temp = temp.replaceAll(CHAR_REPEATS_BEG, "$2"); // removes multiple char repeats a the beginning
@@ -186,10 +189,20 @@ public class Tokenizer implements Preprocessor {
 
     public static class TokenizerBuilder {
 
-        private TDialog dialog;
+        private int minTokenLength = 2;
+        private int maxTokenLength = 30;
 
-        TokenizerBuilder(TDialog dialog) {
-            this.dialog = dialog;
+        public TokenizerBuilder setMinTokenLength(int minTokenLength) {
+            this.minTokenLength = minTokenLength;
+            return this;
+        }
+
+        public TokenizerBuilder setMaxTokenLength(int maxTokenLength) {
+            this.maxTokenLength = maxTokenLength;
+            return this;
+        }
+
+        public TokenizerBuilder() {
         }
 
         public Tokenizer build() {

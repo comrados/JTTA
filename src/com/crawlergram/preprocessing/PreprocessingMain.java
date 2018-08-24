@@ -9,7 +9,8 @@ package com.crawlergram.preprocessing;
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
-import com.crawlergram.preprocess.liga.LIGA;
+import com.crawlergram.preprocessing.liga.LIGA;
+import com.crawlergram.preprocessing.preprocessor.*;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
 
@@ -18,6 +19,19 @@ import java.io.IOException;
 import java.util.*;
 
 public class PreprocessingMain {
+
+    private static void preprocessingLoop(TLoader tLoader, DBStorageReduced dbStorage, List<Preprocessor> preprocessors){
+        while (tLoader.hasNext()){
+            TDialog current = tLoader.next();
+            current.loadMessages(dbStorage);
+
+            System.out.println(current.getId() + " " + current.getUsername());
+
+            Preprocessing preproc = new Preprocessing.PreprocessingBuilder(current, preprocessors).build();
+            preproc.run();
+            System.out.println();
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -41,23 +55,15 @@ public class PreprocessingMain {
         // loads dialogs
         TLoader tLoader = new TLoader.TLoaderBuilder(dbStorage).setDateFrom(0).setDateTo(0).build();
 
+        List<Preprocessor> preprocessors = new ArrayList<>();
+        preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
+        preprocessors.add(new Tokenizer.TokenizerBuilder().build());
+        preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());
+        preprocessors.add(new StopwordsRemover.StopwordsRemoverBuilder(stopwords).build());
 
+        preprocessingLoop(tLoader, dbStorage, preprocessors);
 
-        while (tLoader.hasNext()){
-            TDialog current = tLoader.next();
-            current.loadMessages(dbStorage);
-
-            System.out.println(current.getId() + " " + current.getUsername());
-
-            List<Preprocessor> preprocessors = new ArrayList<>();
-            preprocessors.add(new MessageMerger.MessageMergerBuilder(current).build());
-            preprocessors.add(new Tokenizer.TokenizerBuilder(current).build());
-            preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(current, tikaModel).build());
-
-            Preprocessing preproc = new Preprocessing.PreprocessingBuilder(current, preprocessors).build();
-            preproc.run();
-            System.out.println();
-        }
+        System.exit(0);
     }
 
 }

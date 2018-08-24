@@ -8,7 +8,7 @@
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocess.Tokenizer;
-import com.crawlergram.preprocess.liga.LIGA;
+import com.crawlergram.preprocessing.liga.LIGA;
 import com.crawlergram.preprocessing.TDialog;
 import com.crawlergram.structures.message.TEMessage;
 import org.apache.tika.langdetect.OptimaizeLangDetector;

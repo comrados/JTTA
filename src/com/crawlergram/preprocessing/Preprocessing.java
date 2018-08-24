@@ -7,6 +7,8 @@
 
 package com.crawlergram.preprocessing;
 
+import com.crawlergram.preprocessing.preprocessor.Preprocessor;
+
 import java.util.List;
 
 public class Preprocessing {
@@ -37,7 +39,7 @@ public class Preprocessing {
 
     public void run(){
         for (Preprocessor preprocessor: preprocessors){
-            preprocessor.run();
+            preprocessor.run(dialog);
         }
     }
 

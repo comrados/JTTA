@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocess.liga;
+package com.crawlergram.preprocessing.liga;
 
 import java.io.File;
 import java.io.IOException;

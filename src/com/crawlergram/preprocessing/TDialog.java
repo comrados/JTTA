@@ -177,4 +177,8 @@ public class TDialog {
         }
     }
 
+    public void removeMessage(TMessage msg){
+        this.messages.remove(msg);
+    }
+
 }

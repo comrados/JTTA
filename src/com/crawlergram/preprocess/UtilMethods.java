@@ -7,7 +7,7 @@
 
 package com.crawlergram.preprocess;
 
-import com.crawlergram.preprocess.liga.LIGA;
+import com.crawlergram.preprocessing.liga.LIGA;
 import com.crawlergram.structures.message.TEMessage;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;

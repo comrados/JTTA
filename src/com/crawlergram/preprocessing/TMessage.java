@@ -10,6 +10,7 @@ package com.crawlergram.preprocessing;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class TMessage {
     protected String text;
     protected Integer date;
     protected List<String> tokens = null;
-    protected Map<String, Double> langs = null;
+    protected Map<String, Double> langs = new HashMap<>();
 
     public TMessage() {
         this.id = 0;
@@ -105,13 +106,15 @@ public class TMessage {
      * Converts tokens back to the text ("clear" text)
      */
     public String getClearText() {
-        if (!tokens.isEmpty()){
+        if (tokens == null){
+            return text;
+        } else if (!tokens.isEmpty()){
             StringBuilder text = new StringBuilder();
             for (String token: tokens)
                 text.append(token).append(" ");
             return text.toString().trim();
         } else {
-            return null;
+            return "";
         }
     }
 
@@ -165,5 +168,7 @@ public class TMessage {
                 }
         return bestLang;
     }
+
+
 
 }

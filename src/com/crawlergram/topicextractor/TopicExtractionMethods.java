@@ -83,7 +83,6 @@ public class TopicExtractionMethods {
             UtilMethods.getMessageLanguages(temsgs, lang);
 
             String bestLang = UtilMethods.getDialogsBestLang(temsgs, 0.8);
-            //getLangStats(temsgs);
             UtilMethods.removeStopWords(temsgs, stopwords, bestLang, 0.9);
             Map<String, String> uniqueWords = UtilMethods.getUniqueWords(temsgs);
 

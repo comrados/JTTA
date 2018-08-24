@@ -5,8 +5,10 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.preprocessing.preprocessor;
 
+import com.crawlergram.preprocessing.TDialog;
+import com.crawlergram.preprocessing.TMessage;
 import com.crawlergram.preprocessing.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocessing.gaussnewton.GaussNewton;
 import com.crawlergram.preprocessing.gaussnewton.NoSquareException;
@@ -17,7 +19,6 @@ import java.util.*;
 public class MessageMerger implements Preprocessor {
 
     private static int docThreshold; // default - 100 (see MessageMergerBuilder)
-    private static TDialog dialog;
 
     public int getDocThreshold() {
         return docThreshold;
@@ -29,7 +30,6 @@ public class MessageMerger implements Preprocessor {
 
     MessageMerger(MessageMergerBuilder builder){
         docThreshold = builder.docThreshold;
-        dialog = builder.dialog;
     }
 
 
@@ -41,13 +41,13 @@ public class MessageMerger implements Preprocessor {
      * We need to merge only messages from Chats, supergroups (type of Channels) and Users.
      */
     @Override
-    public List<TMessage> run() {
+    public List<TMessage> run(TDialog dialog) {
         // merging if chat, supergroup or user (placer, where subscribers write something)
         // channels (not supergroups) usually are blogs, subscribers can't post there
         // if flags' 9th bit is "1" - channel is supergroup (0001 0000 0000 = 256d)
         if (!(dialog.getType().equals("Channel") && ((dialog.getFlags() & 256) == 0) &&
                 (dialog.getMessages().size() > 0))) {
-            dialog.setMessages(mergeChat());
+            dialog.setMessages(mergeChat(dialog));
         }
         return removeEmptyMessages(dialog.getMessages());
     }
@@ -55,15 +55,15 @@ public class MessageMerger implements Preprocessor {
     /**
      * merges (long snd short) chats to docs
      */
-    private static List<TMessage> mergeChat() {
+    private static List<TMessage> mergeChat(TDialog dialog) {
         // if number of messages < docThreshold - short chat, else - long chat
-        return (dialog.getMessages().size() < docThreshold) ? mergeShortChat() : mergeLongChat();
+        return (dialog.getMessages().size() < docThreshold) ? mergeShortChat(dialog) : mergeLongChat(dialog);
     }
 
     /**
      * merges short chat messages (number of messages < threshold) to one message
      */
-    private static List<TMessage> mergeShortChat() {
+    private static List<TMessage> mergeShortChat(TDialog dialog) {
         List<TMessage> merged = new LinkedList<>();
         StringBuilder text = new StringBuilder();
         for (TMessage message : dialog.getMessages()) {
@@ -82,7 +82,7 @@ public class MessageMerger implements Preprocessor {
     /**
      * merges long chat messages (number of messages > threshold) if they fit time interval
      */
-    private static List<TMessage> mergeLongChat() {
+    private static List<TMessage> mergeLongChat(TDialog dialog) {
         Collections.sort(dialog.getMessages(), new TMessageComparator());
         // get intervals between messages to array
         List<Integer> dates = new ArrayList<>();
@@ -114,7 +114,7 @@ public class MessageMerger implements Preprocessor {
         }
         int timeThreshold = (int) Math.ceil(ExpRegMethods.mathTimeThresholdCount(expModel[1], 0.01));
         // returns the list of merged documents
-        return mergeByTime(timeThreshold);
+        return mergeByTime(dialog, timeThreshold);
     }
 
     /**
@@ -122,9 +122,9 @@ public class MessageMerger implements Preprocessor {
      *
      * @param timeThreshold maximum time between messages in one doc
      */
-    private static List<TMessage> mergeByTime(int timeThreshold) {
+    private static List<TMessage> mergeByTime(TDialog dialog, int timeThreshold) {
         if (timeThreshold <= 0) {
-            return mergeShortChat();
+            return mergeShortChat(dialog);
         } else {
             List<TMessage> mesCopy = new LinkedList<>(dialog.getMessages());
             for (int i = 0; i < mesCopy.size() - 1; i++) {
@@ -150,8 +150,8 @@ public class MessageMerger implements Preprocessor {
      */
     public static List<TMessage> removeEmptyMessages(List<TMessage> msgs) {
         for (int i = 0; i < msgs.size(); i++) {
-            if (msgs.get(i).getText().isEmpty()) {
-                msgs.remove(i);
+            if ((msgs.get(i).getText() == null) || msgs.get(i).getText().trim().isEmpty()) {
+                msgs.remove(i--);
             }
         }
         return msgs;
@@ -160,15 +160,14 @@ public class MessageMerger implements Preprocessor {
     public static class MessageMergerBuilder {
 
         private int docThreshold = 100;
-        private TDialog dialog;
 
         public MessageMergerBuilder setDocThreshold(int docThreshold) {
             this.docThreshold = docThreshold;
             return this;
         }
 
-        MessageMergerBuilder(TDialog dialog) {
-            this.dialog = dialog;
+        public MessageMergerBuilder() {
+
         }
 
         public MessageMerger build() {

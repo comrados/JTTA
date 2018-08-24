@@ -5,9 +5,11 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocess.liga.LIGA;
+import com.crawlergram.preprocessing.TDialog;
+import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.preprocessing.liga.LIGA;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
 
@@ -17,14 +19,13 @@ import java.util.TreeMap;
 
 public class LanguageIdentificator implements Preprocessor {
 
-    private static TDialog dialog;
     private static Object langModel;
 
     /**
      * Indentifies languages for each message
      */
     @Override
-    public List<TMessage> run() {
+    public List<TMessage> run(TDialog dialog) {
         if (langModel instanceof LIGA) {
             for (TMessage msg : dialog.getMessages())
                 msg.setLangs(((LIGA) langModel).classify(msg.getClearText()));
@@ -44,17 +45,13 @@ public class LanguageIdentificator implements Preprocessor {
 
 
     public LanguageIdentificator(LanguageIdentificatorBuilder builder){
-        dialog = builder.dialog;
         langModel = builder.langModel;
     }
 
     public static class LanguageIdentificatorBuilder {
-
-        private TDialog dialog;
         private Object langModel;
 
-        LanguageIdentificatorBuilder(TDialog dialog, Object langModel) {
-            this.dialog = dialog;
+        public LanguageIdentificatorBuilder(Object langModel) {
             this.langModel = langModel;
         }
 
