@@ -60,6 +60,7 @@ public class PreprocessingMain {
         preprocessors.add(new Tokenizer.TokenizerBuilder().build());
         preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());
         preprocessors.add(new StopwordsRemover.StopwordsRemoverBuilder(stopwords).build());
+        preprocessors.add(new StemmerGRAS.StemmerGRASBuilder().build());
 
         preprocessingLoop(tLoader, dbStorage, preprocessors);
 

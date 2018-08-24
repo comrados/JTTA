@@ -41,7 +41,7 @@ public class MessageMerger implements Preprocessor {
      * We need to merge only messages from Chats, supergroups (type of Channels) and Users.
      */
     @Override
-    public List<TMessage> run(TDialog dialog) {
+    public TDialog run(TDialog dialog) {
         // merging if chat, supergroup or user (placer, where subscribers write something)
         // channels (not supergroups) usually are blogs, subscribers can't post there
         // if flags' 9th bit is "1" - channel is supergroup (0001 0000 0000 = 256d)
@@ -49,7 +49,8 @@ public class MessageMerger implements Preprocessor {
                 (dialog.getMessages().size() > 0))) {
             dialog.setMessages(mergeChat(dialog));
         }
-        return removeEmptyMessages(dialog.getMessages());
+        dialog.setMessages(removeEmptyMessages(dialog.getMessages()));
+        return dialog;
     }
 
     /**

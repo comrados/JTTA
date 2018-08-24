@@ -17,6 +17,6 @@ public interface Preprocessor {
     /**
      * interface for preprocessor functions
      */
-    List<TMessage> run(TDialog dialog);
+    TDialog run(TDialog dialog);
 
 }

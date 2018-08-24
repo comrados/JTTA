@@ -10,10 +10,7 @@ package com.crawlergram.preprocessing;
 import com.crawlergram.db.DBStorageReduced;
 import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TDialog {
 
@@ -22,6 +19,7 @@ public class TDialog {
     private Long accessHash;
     private String username;
     private Integer flags;
+    private Map<String, String> uniqueWords = new TreeMap<>();
     private List<TMessage> messages = new ArrayList<>();
 
     public TDialog(Integer id, String type, Long accessHash, String username, Integer flags) {
@@ -78,6 +76,14 @@ public class TDialog {
 
     public void setFlags(Integer flags) {
         this.flags = flags;
+    }
+
+    public Map<String, String> getUniqueWords() {
+        return uniqueWords;
+    }
+
+    public void setUniqueWords(Map<String, String> uniqueWords) {
+        this.uniqueWords = uniqueWords;
     }
 
     public List<TMessage> getMessages() {
@@ -179,6 +185,20 @@ public class TDialog {
 
     public void removeMessage(TMessage msg){
         this.messages.remove(msg);
+    }
+
+    /**
+     * Creates a message consisting of stems of original words
+     *
+     * @param msg messages
+     */
+    public String getTextFromStems(TMessage msg) {
+        StringBuilder stemmedText = new StringBuilder();
+        List<String> tokens = msg.getTokens();
+        for (String token : tokens) {
+            stemmedText.append(uniqueWords.get(token)).append(" ");
+        }
+        return stemmedText.toString().trim();
     }
 
 }

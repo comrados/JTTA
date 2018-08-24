@@ -11,7 +11,7 @@ import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.preprocess.MessageMergingMethods;
 import com.crawlergram.preprocess.Tokenizer;
 import com.crawlergram.preprocess.UtilMethods;
-import com.crawlergram.preprocess.gras.GRAS;
+import com.crawlergram.preprocessing.gras.GRAS;
 import com.crawlergram.preprocessing.TMessage;
 import com.crawlergram.topicextractor.ldadmm.models.GSDMM;
 import com.crawlergram.topicextractor.ldadmm.models.GSLDA;
@@ -87,7 +87,7 @@ public class TopicExtractionMethods {
             Map<String, String> uniqueWords = UtilMethods.getUniqueWords(temsgs);
 
             uniqueWords = GRAS.doStemming(uniqueWords, 5, 4, 0.8);
-            UtilMethods.getTextFromStems( temsgs, uniqueWords);
+            UtilMethods.getTextFromStems(temsgs, uniqueWords);
 
             GSDMM dmm = new GSDMM(temsgs, 10, 0.1, 0.1, 1000, 10);
             TEResults resDMM = dmm.inference();

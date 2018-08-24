@@ -26,8 +26,9 @@ public class StopwordsRemover implements Preprocessor {
     private double popTreshold;
 
     @Override
-    public List<TMessage> run(TDialog dialog) {
-        return removeStopWords(dialog, langsRatio);
+    public TDialog run(TDialog dialog) {
+        dialog.setMessages(removeStopWords(dialog, langsRatio));
+        return dialog;
     }
 
     StopwordsRemover(StopwordsRemoverBuilder builder){

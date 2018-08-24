@@ -10,7 +10,6 @@ package com.crawlergram.preprocessing.preprocessor;
 import com.crawlergram.preprocessing.TDialog;
 import com.crawlergram.preprocessing.TMessage;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,12 +38,11 @@ public class Tokenizer implements Preprocessor {
     }
 
     @Override
-    public List<TMessage> run(TDialog dialog) {
-        List<TMessage> tokenized = new ArrayList<>();
+    public TDialog run(TDialog dialog) {
         for (TMessage msg : dialog.getMessages()) {
             msg.setTokens(tokenizeToList(msg.getText()));
         }
-        return tokenized;
+        return dialog;
     }
 
     /**
