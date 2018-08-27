@@ -9,8 +9,8 @@ package com.crawlergram.textclassification;
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.preprocess.UtilMethods;
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.structures.message.TEMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.message_old.TEMessage;
 
 import java.util.ArrayList;
 import java.util.List;

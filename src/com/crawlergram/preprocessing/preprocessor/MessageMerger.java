@@ -7,12 +7,12 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.TMessage;
 import com.crawlergram.preprocessing.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocessing.gaussnewton.GaussNewton;
 import com.crawlergram.preprocessing.gaussnewton.NoSquareException;
-import com.crawlergram.structures.message.TMessageComparator;
+import com.crawlergram.structures.message_old.TMessageComparator;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public class MessageMerger implements Preprocessor {
         docThreshold = threshold;
     }
 
-    MessageMerger(MessageMergerBuilder builder){
+    public MessageMerger(MessageMergerBuilder builder){
         docThreshold = builder.docThreshold;
     }
 
@@ -62,7 +62,7 @@ public class MessageMerger implements Preprocessor {
     }
 
     /**
-     * merges short chat messages (number of messages < threshold) to one message
+     * merges short chat messages (number of messages < threshold) to one message_old
      */
     private static List<TMessage> mergeShortChat(TDialog dialog) {
         List<TMessage> merged = new LinkedList<>();
@@ -73,7 +73,7 @@ public class MessageMerger implements Preprocessor {
             }
         }
         if (text.length() > 0) {
-            // id and date of last message are taken
+            // id and date of last message_old are taken
             TMessage first = dialog.getMessages().get(0);
             merged.add(new TMessage(first.getId(), text.toString().trim(), first.getDate(), first.getTokens(), first.getLangs()));
         }

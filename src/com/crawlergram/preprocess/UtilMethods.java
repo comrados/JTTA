@@ -8,7 +8,7 @@
 package com.crawlergram.preprocess;
 
 import com.crawlergram.preprocessing.liga.LIGA;
-import com.crawlergram.structures.message.TEMessage;
+import com.crawlergram.structures.message_old.TEMessage;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
 
@@ -46,7 +46,7 @@ public class UtilMethods {
     }
 
     /**
-     * Creates a message consisting of stems of original words
+     * Creates a message_old consisting of stems of original words
      *
      * @param msgs        messages
      * @param uniqueWords unique words
@@ -63,7 +63,7 @@ public class UtilMethods {
     }
 
     /**
-     * Indentifies languages for each message
+     * Indentifies languages for each message_old
      *
      * @param msgs messages
      * @param lang language identification model

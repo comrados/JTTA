@@ -12,12 +12,12 @@ import com.crawlergram.preprocess.MessageMergingMethods;
 import com.crawlergram.preprocess.Tokenizer;
 import com.crawlergram.preprocess.UtilMethods;
 import com.crawlergram.preprocessing.gras.GRAS;
-import com.crawlergram.preprocessing.TMessage;
-import com.crawlergram.topicextractor.ldadmm.models.GSDMM;
-import com.crawlergram.topicextractor.ldadmm.models.GSLDA;
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.structures.message.TEMessage;
-import com.crawlergram.structures.results.TEResults;
+import com.crawlergram.structures.TMessage;
+import com.crawlergram.topicmodeling.ldadmm.models.GSDMM;
+import com.crawlergram.topicmodeling.ldadmm.models.GSLDA;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.message_old.TEMessage;
+import com.crawlergram.structures.results.TMResults;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -89,17 +89,17 @@ public class TopicExtractionMethods {
             uniqueWords = GRAS.doStemming(uniqueWords, 5, 4, 0.8);
             UtilMethods.getTextFromStems(temsgs, uniqueWords);
 
-            GSDMM dmm = new GSDMM(temsgs, 10, 0.1, 0.1, 1000, 10);
-            TEResults resDMM = dmm.inference();
+            //GSDMM dmm = new GSDMM(temsgs, 10, 0.1, 0.1, 1000, 10);
+            //TMResults resDMM = dmm.inference();
 
-            GSLDA lda = new GSLDA(temsgs, 10, 0.01, 0.1, 1000, 10);
-            TEResults resLDA = lda.inference();
+            //GSLDA lda = new GSLDA(temsgs, 10, 0.01, 0.1, 1000, 10);
+            //TMResults resLDA = lda.inference();
 
             //print some stats
             statUtils(temsgs, uniqueWords);
 
-            printTopWords(resDMM);
-            printTopWords(resLDA);
+            //printTopWords(resDMM);
+            //printTopWords(resLDA);
 
             try {
                 saveSet("words.txt", uniqueWords);
@@ -165,7 +165,7 @@ public class TopicExtractionMethods {
         return totalAv / n;
     }
 
-    private static void printTopWords(TEResults res) {
+    private static void printTopWords(TMResults res) {
         System.out.println();
         System.out.println();
         System.out.println(res.getParameters().toString());

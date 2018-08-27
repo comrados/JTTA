@@ -19,7 +19,7 @@ import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.preprocessing.TDialog;
+import com.crawlergram.structures.TDialog;
 
 import java.io.*;
 import java.util.*;
@@ -452,7 +452,7 @@ public class MongoDBStorageReduced implements DBStorageReduced {
     }
 
     /**
-     * returns list of existing message collections names
+     * returns list of existing message_old collections names
      */
     public List<String> getMessagesCollections() {
         try {

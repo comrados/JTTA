@@ -1,4 +1,4 @@
-package com.crawlergram.topicextractor.ldadmm.utility;
+package com.crawlergram.topicmodeling.ldadmm.utility;
 
 public class MTRandom
 {

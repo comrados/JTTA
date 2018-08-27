@@ -7,8 +7,8 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.TMessage;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -83,7 +83,7 @@ public class Tokenizer implements Preprocessor {
      * Tokenization method for strings. Returns tokens with punctuation (except of web links and numbers).
      * Simple tokens can contain compounds (e.g. web-development: web, development).
      *
-     * @param text original message text
+     * @param text original message_old text
      */
     private List<String> getSimpleTokens(String text) {
         String[] tokensA = text.split("\\s+");

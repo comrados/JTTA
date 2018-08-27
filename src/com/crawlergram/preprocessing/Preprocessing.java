@@ -8,6 +8,7 @@
 package com.crawlergram.preprocessing;
 
 import com.crawlergram.preprocessing.preprocessor.Preprocessor;
+import com.crawlergram.structures.TDialog;
 
 import java.util.List;
 

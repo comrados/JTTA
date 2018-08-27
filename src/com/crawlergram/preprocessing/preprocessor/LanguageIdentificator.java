@@ -7,8 +7,8 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.TMessage;
 import com.crawlergram.preprocessing.liga.LIGA;
 import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
@@ -21,7 +21,7 @@ public class LanguageIdentificator implements Preprocessor {
     private static Object langModel;
 
     /**
-     * Indentifies languages for each message
+     * Indentifies languages for each message_old
      */
     @Override
     public TDialog run(TDialog dialog) {

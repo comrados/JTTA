@@ -10,9 +10,9 @@ package com.crawlergram.structures.results;
 import java.util.List;
 import java.util.Map;
 
-public class TEResults {
+public class TMResults {
 
-    private TEResultsParameters parameters;
+    private TMResultsParameters parameters;
     private List<List<Integer>> topicAssignments;
     private List<Map<String, Double>> topTopicalWords;
     private List<List<Double>> topicWordPros; // phi
@@ -20,7 +20,7 @@ public class TEResults {
     private List<List<Double>> docTopicPros; //theta
     private List<List<Integer>> docTopicCount;
 
-    public TEResults(TEResultsParameters parameters, List<List<Integer>> topicAssignments,
+    public TMResults(TMResultsParameters parameters, List<List<Integer>> topicAssignments,
                      List<Map<String, Double>> topTopicalWords, List<List<Double>> topicWordPros,
                      List<List<Integer>> topicWordCount, List<List<Double>> docTopicPros,
                      List<List<Integer>> docTopicCount) {
@@ -33,11 +33,11 @@ public class TEResults {
         this.docTopicCount = docTopicCount;
     }
 
-    public TEResultsParameters getParameters() {
+    public TMResultsParameters getParameters() {
         return parameters;
     }
 
-    public void setParameters(TEResultsParameters parameters) {
+    public void setParameters(TMResultsParameters parameters) {
         this.parameters = parameters;
     }
 

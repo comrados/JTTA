@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.structures;
 
 import java.util.Comparator;
 

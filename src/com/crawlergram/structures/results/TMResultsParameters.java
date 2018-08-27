@@ -7,7 +7,7 @@
 
 package com.crawlergram.structures.results;
 
-public class TEResultsParameters {
+public class TMResultsParameters {
 
     private String model;
     private int numTopics;
@@ -16,7 +16,7 @@ public class TEResultsParameters {
     private int numIterations;
     private int topWords;
 
-    public TEResultsParameters(String model, int numTopics,
+    public TMResultsParameters(String model, int numTopics,
                                double alpha, double beta, int numIterations, int topWords) {
         this.model = model;
         this.numTopics = numTopics;

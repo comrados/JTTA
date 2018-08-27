@@ -7,8 +7,8 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.TMessage;
 import com.crawlergram.preprocessing.gras.GRAS;
 
 import java.util.Map;
@@ -21,7 +21,7 @@ public class StemmerGRAS implements Preprocessor {
     private int alpha;
     private double delta;
 
-    StemmerGRAS(StemmerGRASBuilder builder){
+    public StemmerGRAS(StemmerGRASBuilder builder){
         this.l = builder.l;
         this.alpha = builder.alpha;
         this.delta = builder.delta;

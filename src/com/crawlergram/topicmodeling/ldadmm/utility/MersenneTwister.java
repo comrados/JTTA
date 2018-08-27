@@ -1,4 +1,4 @@
-package com.crawlergram.topicextractor.ldadmm.utility;
+package com.crawlergram.topicmodeling.ldadmm.utility;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

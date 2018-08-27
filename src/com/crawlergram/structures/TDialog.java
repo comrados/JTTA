@@ -1,3 +1,4 @@
+
 /*
  * Title: TDialog.java
  * Project: JTTA
@@ -5,7 +6,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.structures;
 
 import com.crawlergram.db.DBStorageReduced;
 import org.bson.Document;
@@ -188,7 +189,7 @@ public class TDialog {
     }
 
     /**
-     * Creates a message consisting of stems of original words
+     * Creates a message_old consisting of stems of original words
      *
      * @param msg messages
      */

@@ -7,8 +7,8 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.TMessage;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +31,7 @@ public class StopwordsRemover implements Preprocessor {
         return dialog;
     }
 
-    StopwordsRemover(StopwordsRemoverBuilder builder){
+    public StopwordsRemover(StopwordsRemoverBuilder builder){
         stopwords = builder.stopwords;
         this.langsRatio = builder.langsRatio;
         this.popTreshold = builder.popTreshold;

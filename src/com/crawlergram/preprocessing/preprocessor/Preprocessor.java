@@ -7,15 +7,12 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
-
-import java.util.List;
+import com.crawlergram.structures.TDialog;
 
 public interface Preprocessor {
 
     /**
-     * interface for preprocessor functions
+     * interface for preprocessor classes
      */
     TDialog run(TDialog dialog);
 

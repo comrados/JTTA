@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.structures;
 
 import com.crawlergram.db.DBStorageReduced;
 
@@ -92,6 +92,10 @@ public class TLoader {
         return dialogs.size();
     }
 
+    public void reset(){
+        this.current = 0;
+    }
+
     /**
      * loads messages for dialog
      *
@@ -147,7 +151,7 @@ public class TLoader {
             return this;
         }
 
-        TLoaderBuilder(DBStorageReduced dbStorage) {
+        public TLoaderBuilder(DBStorageReduced dbStorage) {
             this.dbStorage = dbStorage;
         }
 

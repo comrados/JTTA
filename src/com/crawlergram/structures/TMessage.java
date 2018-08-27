@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.structures;
 
 import org.bson.Document;
 
@@ -83,7 +83,7 @@ public class TMessage {
     }
 
     /**
-     * Converts mongoDB's document to TEM (extracts text of message or media's caption)
+     * Converts mongoDB's document to TEM (extracts text of message_old or media's caption)
      * Strings are set converted to lowercase
      *
      * @param doc document
@@ -119,7 +119,7 @@ public class TMessage {
     }
 
     /**
-     * Converts mongoDB's documents to TEM (extracts text of message or media's caption)
+     * Converts mongoDB's documents to TEM (extracts text of message_old or media's caption)
      * Strings are set converted to lowercase
      *
      * @param docs documents

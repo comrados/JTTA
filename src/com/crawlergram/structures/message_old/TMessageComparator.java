@@ -5,9 +5,9 @@
  * 2018
  */
 
-package com.crawlergram.structures.message;
+package com.crawlergram.structures.message_old;
 
-import com.crawlergram.preprocessing.TMessage;
+import com.crawlergram.structures.TMessage;
 
 import java.util.Comparator;
 

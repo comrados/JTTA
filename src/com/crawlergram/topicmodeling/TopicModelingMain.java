@@ -1,18 +1,23 @@
 /*
- * Title: PreprocessingMain.java
+ * Title: TopicModelingMain.java
  * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
  */
 
-package com.crawlergram.preprocessing;
+package com.crawlergram.topicmodeling;
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
+import com.crawlergram.preprocessing.PreprocessingMain;
 import com.crawlergram.preprocessing.liga.LIGA;
 import com.crawlergram.preprocessing.preprocessor.*;
 import com.crawlergram.structures.TDialog;
 import com.crawlergram.structures.TLoader;
+import com.crawlergram.structures.results.TMResults;
+import com.crawlergram.topicmodeling.models.ModelDMM;
+import com.crawlergram.topicmodeling.models.ModelLDA;
+import com.crawlergram.topicmodeling.models.TopicModel;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
 
@@ -20,24 +25,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class PreprocessingMain {
+public class TopicModelingMain {
 
-    public static void preprocessingLoop(TLoader tLoader, DBStorageReduced dbStorage, List<Preprocessor> preprocessors){
-        System.out.println("Preprocessing");
+    public static List<TMResults> topicModelingLoop(TLoader tLoader, List<TopicModel> topicModels){
+        System.out.println("Topic Modeling");
+        List<TMResults> res = new ArrayList<>();
         while (tLoader.hasNext()){
             TDialog current = tLoader.next();
-            current.loadMessages(dbStorage);
 
             System.out.println(current.getId() + " " + current.getUsername());
 
-            Preprocessing preproc = new Preprocessing.PreprocessingBuilder(current, preprocessors).build();
-            preproc.run();
+            TopicModeling topicModeling = new TopicModeling.TopicModelingBuilder(current, topicModels).build();
+
+            topicModeling.run();
             System.out.println();
+
+            res.addAll(topicModeling.getResults());
         }
+        return res;
     }
 
     public static void main(String[] args) {
 
+        // preprocessing first
         // DB "telegram" location - localhost:27017
         // User "telegramJ" - db.createUser({user: "telegramJ", pwd: "cart", roles: [{ role: "readWrite", db: "telegram" }]})
         DBStorageReduced dbStorage = new MongoDBStorageReduced("telegramJ", "telegram", "cart", "localhost", 27017, "fs");
@@ -59,15 +69,26 @@ public class PreprocessingMain {
         TLoader tLoader = new TLoader.TLoaderBuilder(dbStorage).setDateFrom(0).setDateTo(0).build();
 
         List<Preprocessor> preprocessors = new ArrayList<>();
-        preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
+        // preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
         preprocessors.add(new Tokenizer.TokenizerBuilder().build());
         preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());
         preprocessors.add(new StopwordsRemover.StopwordsRemoverBuilder(stopwords).build());
         preprocessors.add(new StemmerGRAS.StemmerGRASBuilder().build());
 
-        preprocessingLoop(tLoader, dbStorage, preprocessors);
+        PreprocessingMain.preprocessingLoop(tLoader, dbStorage, preprocessors);
+
+        tLoader.reset(); // just returns TLoader's pointer to 0th position
+
+        List<TopicModel> topicModels = new ArrayList<>();
+        topicModels.add(new ModelDMM.ModelDMMBuilder(10, 10).setIterations(100).build());
+        topicModels.add(new ModelLDA.ModelLDABuilder(10, 10).setIterations(100).build());
+
+        List<TMResults> results = topicModelingLoop(tLoader, topicModels);
+
+
 
         System.exit(0);
+
     }
 
 }

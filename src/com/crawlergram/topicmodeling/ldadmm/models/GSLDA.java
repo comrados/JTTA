@@ -4,12 +4,13 @@
  * Creator: Georgii Mikriukov
  */
 
-package com.crawlergram.topicextractor.ldadmm.models;
+package com.crawlergram.topicmodeling.ldadmm.models;
 
-import com.crawlergram.topicextractor.ldadmm.utility.FuncUtils;
-import com.crawlergram.structures.message.TEMessage;
-import com.crawlergram.structures.results.TEResults;
-import com.crawlergram.structures.results.TEResultsParameters;
+import com.crawlergram.structures.TMessage;
+import com.crawlergram.topicmodeling.ldadmm.utility.FuncUtils;
+import com.crawlergram.structures.message_old.TEMessage;
+import com.crawlergram.structures.results.TMResults;
+import com.crawlergram.structures.results.TMResultsParameters;
 
 import java.util.*;
 
@@ -74,7 +75,7 @@ public class GSLDA {
      * @param inNumIterations number of iterations
      * @param inTopWords      top topic words for output
      */
-    public GSLDA(List<TEMessage> msgs, int inNumTopics,
+    public GSLDA(List<TMessage> msgs, int inNumTopics,
                  double inAlpha, double inBeta, int inNumIterations, int inTopWords) {
 
         alpha = inAlpha;
@@ -93,8 +94,8 @@ public class GSLDA {
 
         int indexWord = -1;
 
-        for (TEMessage msg : msgs) {
-            String doc = msg.getStemmedText();
+        for (TMessage msg : msgs) {
+            String doc = msg.getClearText();
             if (doc.trim().length() == 0) continue;
 
             String[] words = doc.trim().split("\\s+");
@@ -167,11 +168,11 @@ public class GSLDA {
     /**
      * Inference topic models
      */
-    public TEResults inference() {
+    public TMResults inference() {
         if (debug) System.out.println("Running Gibbs sampling inference: ");
 
         for (int iter = 1; iter <= numIterations; iter++) {
-            if (debug && iter % 1000 == 0) System.out.println("\tSampling iteration: " + (iter));
+            if (debug && iter % 100 == 0) System.out.println("\tSampling iteration: " + (iter));
             sampleInSingleIteration();
         }
 
@@ -218,8 +219,8 @@ public class GSLDA {
         }
     }
 
-    private TEResultsParameters writeParameters() {
-        return new TEResultsParameters("LDA", numTopics, alpha, beta, numIterations, topWords);
+    private TMResultsParameters writeParameters() {
+        return new TMResultsParameters("LDA", numTopics, alpha, beta, numIterations, topWords);
     }
 
     private Map<Integer, String> writeDictionary() {
@@ -327,8 +328,8 @@ public class GSLDA {
         return dtc;
     }
 
-    private TEResults write() {
-        return new TEResults(writeParameters(), writeTopicAssignments(), writeTopTopicalWords(),
+    private TMResults write() {
+        return new TMResults(writeParameters(), writeTopicAssignments(), writeTopTopicalWords(),
                 writeTopicWordPros(), writeTopicWordCount(), writeDocTopicPros(), writeDocTopicCount());
     }
 

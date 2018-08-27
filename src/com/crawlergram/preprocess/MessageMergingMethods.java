@@ -10,9 +10,9 @@ package com.crawlergram.preprocess;
 import com.crawlergram.preprocessing.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocessing.gaussnewton.GaussNewton;
 import com.crawlergram.preprocessing.gaussnewton.NoSquareException;
-import com.crawlergram.preprocessing.TDialog;
-import com.crawlergram.preprocessing.TMessage;
-import com.crawlergram.structures.message.TMessageComparator;
+import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.TMessage;
+import com.crawlergram.structures.message_old.TMessageComparator;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class MessageMergingMethods {
     }
 
     /**
-     * merges short chat messages (number of messages < threshold) to one message
+     * merges short chat messages (number of messages < threshold) to one message_old
      *
      * @param messages all messages
      */
@@ -66,7 +66,7 @@ public class MessageMergingMethods {
             }
         }
         if (!text.isEmpty()) {
-            // id and date of last message are taken
+            // id and date of last message_old are taken
             TMessage first = messages.get(0);
             merged.add(new TMessage(first.getId(), text, first.getDate()));
         }

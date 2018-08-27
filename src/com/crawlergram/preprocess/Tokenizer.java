@@ -7,7 +7,7 @@
 
 package com.crawlergram.preprocess;
 
-import com.crawlergram.structures.message.TEMessage;
+import com.crawlergram.structures.message_old.TEMessage;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -75,9 +75,9 @@ public class Tokenizer {
     }
 
     /**
-     * Tokenizes single message
+     * Tokenizes single message_old
      *
-     * @param msg message
+     * @param msg message_old
      */
     private static TEMessage tokenizeMessage(TEMessage msg) {
         List<String> tokens = getSimpleTokens(msg.getText());
@@ -90,7 +90,7 @@ public class Tokenizer {
      * Tokenization method for strings. Returns tokens with punctuation (except of web links and numbers).
      * Simple tokens can contain compounds (e.g. web-development: web, development).
      *
-     * @param text original message text
+     * @param text original message_old text
      */
     private static List<String> getSimpleTokens(String text) {
         String[] tokensA = text.split("\\s+");

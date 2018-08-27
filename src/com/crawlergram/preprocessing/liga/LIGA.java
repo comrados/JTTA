@@ -265,7 +265,7 @@ public class LIGA {
     }
 
     /**
-     * Classifies a message and returns languages with probabilities
+     * Classifies a message_old and returns languages with probabilities
      *
      * @param doc original document
      */
