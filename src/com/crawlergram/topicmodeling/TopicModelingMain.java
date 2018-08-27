@@ -12,7 +12,7 @@ import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocessing.PreprocessingMain;
 import com.crawlergram.preprocessing.liga.LIGA;
 import com.crawlergram.preprocessing.preprocessor.*;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TLoader;
 import com.crawlergram.structures.results.TMResults;
 import com.crawlergram.topicmodeling.models.ModelDMM;

@@ -5,17 +5,15 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor;
+package com.crawlergram._old.topicextractor;
 
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.preprocess.MessageMergingMethods;
-import com.crawlergram.preprocess.Tokenizer;
-import com.crawlergram.preprocess.UtilMethods;
+import com.crawlergram._old.preprocess.MessageMergingMethods;
+import com.crawlergram._old.preprocess.Tokenizer;
+import com.crawlergram._old.preprocess.UtilMethods;
 import com.crawlergram.preprocessing.gras.GRAS;
 import com.crawlergram.structures.TMessage;
-import com.crawlergram.topicmodeling.ldadmm.models.GSDMM;
-import com.crawlergram.topicmodeling.ldadmm.models.GSLDA;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.message_old.TEMessage;
 import com.crawlergram.structures.results.TMResults;
 

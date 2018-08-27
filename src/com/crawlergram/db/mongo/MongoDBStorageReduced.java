@@ -19,7 +19,7 @@ import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 
 import java.io.*;
 import java.util.*;

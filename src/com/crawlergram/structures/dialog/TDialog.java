@@ -1,4 +1,3 @@
-
 /*
  * Title: TDialog.java
  * Project: JTTA
@@ -6,9 +5,10 @@
  * 2018
  */
 
-package com.crawlergram.structures;
+package com.crawlergram.structures.dialog;
 
 import com.crawlergram.db.DBStorageReduced;
+import com.crawlergram.structures.TMessage;
 import org.bson.Document;
 
 import java.util.*;

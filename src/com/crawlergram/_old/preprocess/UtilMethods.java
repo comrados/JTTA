@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocess;
+package com.crawlergram._old.preprocess;
 
 import com.crawlergram.preprocessing.liga.LIGA;
 import com.crawlergram.structures.message_old.TEMessage;

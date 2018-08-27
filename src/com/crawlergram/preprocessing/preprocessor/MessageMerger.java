@@ -7,7 +7,7 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
 import com.crawlergram.preprocessing.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocessing.gaussnewton.GaussNewton;

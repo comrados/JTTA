@@ -5,11 +5,11 @@
  * 2018
  */
 
-package com.crawlergram.textclassification;
+package com.crawlergram._old.textclassification;
 
 import com.crawlergram.db.DBStorageReduced;
-import com.crawlergram.preprocess.UtilMethods;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram._old.preprocess.UtilMethods;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.message_old.TEMessage;
 
 import java.util.ArrayList;

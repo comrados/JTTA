@@ -7,7 +7,7 @@
 
 package com.crawlergram.db;
 
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 
 import java.util.List;
 

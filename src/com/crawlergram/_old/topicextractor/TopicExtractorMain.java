@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.topicextractor;
+package com.crawlergram._old.topicextractor;
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;

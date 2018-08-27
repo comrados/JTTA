@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.structures;
+package com.crawlergram.structures.dialog;
 
 import java.util.Comparator;
 

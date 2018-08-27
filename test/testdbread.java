@@ -6,7 +6,7 @@
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.message_old.TEMessage;
 import org.bson.Document;
 

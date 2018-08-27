@@ -7,7 +7,7 @@
 
 package com.crawlergram.preprocessing.preprocessor;
 
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 
 public interface Preprocessor {
 

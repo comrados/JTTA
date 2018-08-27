@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.crawlergram.preprocess.Tokenizer;
+import com.crawlergram._old.preprocess.Tokenizer;
 import com.fasterxml.jackson.core.*;
 import org.apache.commons.lang3.tuple.MutablePair;
 

@@ -5,12 +5,12 @@
  * 2018
  */
 
-package com.crawlergram.preprocess;
+package com.crawlergram._old.preprocess;
 
 import com.crawlergram.preprocessing.gaussnewton.ExpRegMethods;
 import com.crawlergram.preprocessing.gaussnewton.GaussNewton;
 import com.crawlergram.preprocessing.gaussnewton.NoSquareException;
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
 import com.crawlergram.structures.message_old.TMessageComparator;
 

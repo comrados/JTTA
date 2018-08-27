@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.textclassification;
+package com.crawlergram._old.textclassification;
 
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;

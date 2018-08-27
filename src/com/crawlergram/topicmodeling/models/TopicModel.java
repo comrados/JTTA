@@ -21,7 +21,7 @@
 
 package com.crawlergram.topicmodeling.models;
 
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.results.TMResults;
 
 public interface TopicModel {

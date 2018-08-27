@@ -7,7 +7,7 @@
 
 package com.crawlergram.topicmodeling;
 
-import com.crawlergram.structures.TDialog;
+import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.results.TMResults;
 import com.crawlergram.topicmodeling.models.TopicModel;
 

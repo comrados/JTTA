@@ -8,6 +8,8 @@
 package com.crawlergram.structures;
 
 import com.crawlergram.db.DBStorageReduced;
+import com.crawlergram.structures.dialog.TDialog;
+import com.crawlergram.structures.dialog.TDialogComparator;
 
 import java.util.Collections;
 import java.util.List;
