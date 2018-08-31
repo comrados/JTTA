@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing.preprocessor;
+package com.crawlergram.preprocessing.models;
 
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class StemmerGRAS implements Preprocessor {
+public class StemmerGRAS implements PreprocessorModel {
 
     private int l;
     private int alpha;

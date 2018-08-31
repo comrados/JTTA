@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing.preprocessor;
+package com.crawlergram.preprocessing.models;
 
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class StopwordsRemover implements Preprocessor {
+public class StopwordsRemover implements PreprocessorModel {
 
     private static Map<String, Set<String>> stopwords;
     private double langsRatio;

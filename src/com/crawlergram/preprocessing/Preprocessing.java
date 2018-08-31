@@ -7,21 +7,21 @@
 
 package com.crawlergram.preprocessing;
 
-import com.crawlergram.preprocessing.preprocessor.Preprocessor;
+import com.crawlergram.preprocessing.models.PreprocessorModel;
 import com.crawlergram.structures.dialog.TDialog;
 
 import java.util.List;
 
 public class Preprocessing {
 
-    private List<Preprocessor> preprocessors;
+    private List<PreprocessorModel> preprocessors;
     private TDialog dialog;
 
-    public List<Preprocessor> getPreprocessors() {
+    public List<PreprocessorModel> getPreprocessors() {
         return preprocessors;
     }
 
-    public void setPreprocessors(List<Preprocessor> preprocessors) {
+    public void setPreprocessors(List<PreprocessorModel> preprocessors) {
         this.preprocessors = preprocessors;
     }
 
@@ -39,17 +39,17 @@ public class Preprocessing {
     }
 
     public void run(){
-        for (Preprocessor preprocessor: preprocessors){
+        for (PreprocessorModel preprocessor: preprocessors){
             preprocessor.run(dialog);
         }
     }
 
     public static class PreprocessingBuilder {
 
-        private List<Preprocessor> preprocessors;
+        private List<PreprocessorModel> preprocessors;
         private TDialog dialog;
 
-        PreprocessingBuilder(TDialog dialog, List<Preprocessor> preprocessors){
+        PreprocessingBuilder(TDialog dialog, List<PreprocessorModel> preprocessors){
             this.dialog = dialog;
             this.preprocessors = preprocessors;
         }

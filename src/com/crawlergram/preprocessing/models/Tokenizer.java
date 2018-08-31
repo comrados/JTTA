@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing.preprocessor;
+package com.crawlergram.preprocessing.models;
 
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Tokenizer implements Preprocessor {
+public class Tokenizer implements PreprocessorModel {
 
     final private static String PUNCT = "[\\p{Punct}–…‹›§«»¿¡!?≠\'´\"‘’“”⟨⟩°※©℗®℠™—]"; // punctuation
     final private static String CHAR_REPEATS_BEG = "^((.)\\2)\\2+"; // same char doesn't repeat more than once at the beginning

@@ -54,6 +54,14 @@ public class TLoader {
         return this;
     }
 
+    public int getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(int current) {
+        this.current = current;
+    }
+
     public TLoader(TLoaderBuilder builder) {
         this.dbStorage = builder.dbStorage;
         this.dateTo = builder.dateTo;
@@ -88,6 +96,10 @@ public class TLoader {
             if (d.getId() == id)
                 return d;
         return null;
+    }
+
+    public TDialog getCurrentDialog() {
+        return dialogs.get(current);
     }
 
     public int size() {

@@ -5,11 +5,11 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing.preprocessor;
+package com.crawlergram.preprocessing.models;
 
 import com.crawlergram.structures.dialog.TDialog;
 
-public interface Preprocessor {
+public interface PreprocessorModel {
 
     /**
      * interface for preprocessor classes

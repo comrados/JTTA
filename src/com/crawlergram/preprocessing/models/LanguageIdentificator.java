@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing.preprocessor;
+package com.crawlergram.preprocessing.models;
 
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
@@ -16,7 +16,7 @@ import org.apache.tika.language.detect.LanguageResult;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class LanguageIdentificator implements Preprocessor {
+public class LanguageIdentificator implements PreprocessorModel {
 
     private static Object langModel;
 

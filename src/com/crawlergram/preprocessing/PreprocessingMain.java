@@ -10,7 +10,7 @@ package com.crawlergram.preprocessing;
 import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocessing.liga.LIGA;
-import com.crawlergram.preprocessing.preprocessor.*;
+import com.crawlergram.preprocessing.models.*;
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TLoader;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
@@ -22,7 +22,7 @@ import java.util.*;
 
 public class PreprocessingMain {
 
-    public static void preprocessingLoop(TLoader tLoader, DBStorageReduced dbStorage, List<Preprocessor> preprocessors){
+    public static void preprocessingLoop(TLoader tLoader, DBStorageReduced dbStorage, List<PreprocessorModel> preprocessors){
         System.out.println("Preprocessing");
         while (tLoader.hasNext()){
             TDialog current = tLoader.next();
@@ -58,7 +58,7 @@ public class PreprocessingMain {
         // loads dialogs
         TLoader tLoader = new TLoader.TLoaderBuilder(dbStorage).setDateFrom(0).setDateTo(0).build();
 
-        List<Preprocessor> preprocessors = new ArrayList<>();
+        List<PreprocessorModel> preprocessors = new ArrayList<>();
         preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
         preprocessors.add(new Tokenizer.TokenizerBuilder().build());
         preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());

@@ -11,7 +11,7 @@ import com.crawlergram.db.DBStorageReduced;
 import com.crawlergram.db.mongo.MongoDBStorageReduced;
 import com.crawlergram.preprocessing.PreprocessingMain;
 import com.crawlergram.preprocessing.liga.LIGA;
-import com.crawlergram.preprocessing.preprocessor.*;
+import com.crawlergram.preprocessing.models.*;
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TLoader;
 import com.crawlergram.structures.results.TMResults;
@@ -27,9 +27,9 @@ import java.util.*;
 
 public class TopicModelingMain {
 
-    public static List<TMResults> topicModelingLoop(TLoader tLoader, List<TopicModel> topicModels){
+    public static Map<Integer, List<TMResults>> topicModelingLoop(TLoader tLoader, List<TopicModel> topicModels){
         System.out.println("Topic Modeling");
-        List<TMResults> res = new ArrayList<>();
+        HashMap<Integer, List<TMResults>> res = new HashMap<>();
         while (tLoader.hasNext()){
             TDialog current = tLoader.next();
 
@@ -40,7 +40,13 @@ public class TopicModelingMain {
             topicModeling.run();
             System.out.println();
 
-            res.addAll(topicModeling.getResults());
+            if (!res.containsKey(current.getId())){
+                res.put(current.getId(), topicModeling.getResults());
+            } else {
+                List<TMResults> old = res.get(current.getId());
+                old.addAll(topicModeling.getResults());
+                res.put(current.getId(), old);
+            }
         }
         return res;
     }
@@ -68,7 +74,7 @@ public class TopicModelingMain {
         // loads dialogs
         TLoader tLoader = new TLoader.TLoaderBuilder(dbStorage).setDateFrom(0).setDateTo(0).build();
 
-        List<Preprocessor> preprocessors = new ArrayList<>();
+        List<PreprocessorModel> preprocessors = new ArrayList<>();
         // preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
         preprocessors.add(new Tokenizer.TokenizerBuilder().build());
         preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());
@@ -83,7 +89,7 @@ public class TopicModelingMain {
         topicModels.add(new ModelDMM.ModelDMMBuilder(10, 10).setIterations(100).build());
         topicModels.add(new ModelLDA.ModelLDABuilder(10, 10).setIterations(100).build());
 
-        List<TMResults> results = topicModelingLoop(tLoader, topicModels);
+        Map<Integer, List<TMResults>> results = topicModelingLoop(tLoader, topicModels);
 
 
 

@@ -5,7 +5,7 @@
  * 2018
  */
 
-package com.crawlergram.preprocessing.preprocessor;
+package com.crawlergram.preprocessing.models;
 
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
@@ -16,7 +16,7 @@ import com.crawlergram.structures.message_old.TMessageComparator;
 
 import java.util.*;
 
-public class MessageMerger implements Preprocessor {
+public class MessageMerger implements PreprocessorModel {
 
     private static int docThreshold; // default - 100 (see MessageMergerBuilder)
 
