@@ -49,7 +49,7 @@ public class Preprocessing {
         private List<PreprocessorModel> preprocessors;
         private TDialog dialog;
 
-        PreprocessingBuilder(TDialog dialog, List<PreprocessorModel> preprocessors){
+        public PreprocessingBuilder(TDialog dialog, List<PreprocessorModel> preprocessors){
             this.dialog = dialog;
             this.preprocessors = preprocessors;
         }

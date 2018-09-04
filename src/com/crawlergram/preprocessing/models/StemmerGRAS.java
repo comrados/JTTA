@@ -70,6 +70,9 @@ public class StemmerGRAS implements PreprocessorModel {
             return this;
         }
 
+        /**
+         * builder
+         */
         public StemmerGRASBuilder() {
         }
 

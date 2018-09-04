@@ -27,7 +27,7 @@ public class StopwordsRemover implements PreprocessorModel {
 
     @Override
     public TDialog run(TDialog dialog) {
-        dialog.setMessages(removeStopWords(dialog, langsRatio));
+        dialog.setMessages(removeStopWords(dialog));
         return dialog;
     }
 
@@ -40,7 +40,7 @@ public class StopwordsRemover implements PreprocessorModel {
     /**
      * Removes stopwords from token compounds. If chat has a dominating language - additional chack
      */
-    public List<TMessage> removeStopWords(TDialog dialog, double langsRatio) {
+    public List<TMessage> removeStopWords(TDialog dialog) {
         String bestLang = dialog.getDialogsBestLang(popTreshold);
         // loads best lang
         if (!bestLang.equals("UNKNOWN") && !stopwords.containsKey(bestLang))
@@ -103,6 +103,11 @@ public class StopwordsRemover implements PreprocessorModel {
             return this;
         }
 
+        /**
+         * builder
+         *
+         * @param stopwords map to store stopwords
+         */
         public StopwordsRemoverBuilder(Map<String, Set<String>> stopwords) {
             this.stopwords = stopwords;
         }

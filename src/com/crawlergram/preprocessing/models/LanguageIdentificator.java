@@ -50,6 +50,11 @@ public class LanguageIdentificator implements PreprocessorModel {
     public static class LanguageIdentificatorBuilder {
         private Object langModel;
 
+        /**
+         * builder
+         *
+         * @param langModel language model (LIGA or LanguageDetector)
+         */
         public LanguageIdentificatorBuilder(Object langModel) {
             this.langModel = langModel;
         }

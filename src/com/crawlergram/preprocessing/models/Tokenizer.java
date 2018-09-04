@@ -10,6 +10,7 @@ package com.crawlergram.preprocessing.models;
 import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.TMessage;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -31,10 +32,12 @@ public class Tokenizer implements PreprocessorModel {
 
     private int minTokenLength;
     private int maxTokenLength;
+    private boolean advanced; // advanced or simple tokenizer
 
     public Tokenizer(TokenizerBuilder builder){
         this.maxTokenLength = builder.maxTokenLength;
         this.minTokenLength = builder.minTokenLength;
+        this.advanced = builder.advanced;
     }
 
     @Override
@@ -52,7 +55,8 @@ public class Tokenizer implements PreprocessorModel {
      */
     public List<String> tokenizeToList(String text) {
         List<String> tokens = getSimpleTokens(text);
-        return getTokenCompounds(tokens);
+        if (advanced) tokens = getTokenCompounds(tokens);
+        return tokens;
     }
 
     /**
@@ -87,13 +91,7 @@ public class Tokenizer implements PreprocessorModel {
      */
     private List<String> getSimpleTokens(String text) {
         String[] tokensA = text.split("\\s+");
-        List<String> tokens = new LinkedList<>();
-        for (String token : tokensA) {
-            if (tokenCheck(token)) {
-                tokens.add(token.replaceAll("['‘’]", ""));
-            }
-        }
-        return tokens;
+        return Arrays.asList(tokensA);
     }
 
     /**
@@ -189,6 +187,7 @@ public class Tokenizer implements PreprocessorModel {
 
         private int minTokenLength = 2;
         private int maxTokenLength = 30;
+        private boolean advanced;
 
         public TokenizerBuilder setMinTokenLength(int minTokenLength) {
             this.minTokenLength = minTokenLength;
@@ -200,7 +199,13 @@ public class Tokenizer implements PreprocessorModel {
             return this;
         }
 
-        public TokenizerBuilder() {
+        /**
+         * builder
+         *
+         * @param advanced advanced (splits and removes bad tokens) or simple (only splits) tokenization
+         */
+        public TokenizerBuilder(boolean advanced) {
+            this.advanced = advanced;
         }
 
         public Tokenizer build() {

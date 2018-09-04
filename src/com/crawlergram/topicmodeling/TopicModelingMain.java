@@ -76,7 +76,7 @@ public class TopicModelingMain {
 
         List<PreprocessorModel> preprocessors = new ArrayList<>();
         // preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
-        preprocessors.add(new Tokenizer.TokenizerBuilder().build());
+        preprocessors.add(new Tokenizer.TokenizerBuilder(true).build());
         preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());
         preprocessors.add(new StopwordsRemover.StopwordsRemoverBuilder(stopwords).build());
         preprocessors.add(new StemmerGRAS.StemmerGRASBuilder().build());

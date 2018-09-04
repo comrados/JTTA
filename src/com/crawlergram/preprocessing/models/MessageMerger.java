@@ -167,8 +167,10 @@ public class MessageMerger implements PreprocessorModel {
             return this;
         }
 
+        /**
+         * builder
+         */
         public MessageMergerBuilder() {
-
         }
 
         public MessageMerger build() {

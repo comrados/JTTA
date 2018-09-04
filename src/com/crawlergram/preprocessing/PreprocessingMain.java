@@ -55,13 +55,17 @@ public class PreprocessingMain {
         // map for stopwords to prevent multiple file readings
         Map<String, Set<String>> stopwords = new TreeMap<>();
 
+        // map for replacements
+        Map<String, Map<String, List<String>>> replacements = new HashMap<>();
+
         // loads dialogs
         TLoader tLoader = new TLoader.TLoaderBuilder(dbStorage).setDateFrom(0).setDateTo(0).build();
 
         List<PreprocessorModel> preprocessors = new ArrayList<>();
         preprocessors.add(new MessageMerger.MessageMergerBuilder().build());
-        preprocessors.add(new Tokenizer.TokenizerBuilder().build());
+        preprocessors.add(new Tokenizer.TokenizerBuilder(true).build());
         preprocessors.add(new LanguageIdentificator.LanguageIdentificatorBuilder(tikaModel).build());
+        preprocessors.add(new TokensReplacer.TokensReplacerBuilder(replacements).build());
         preprocessors.add(new StopwordsRemover.StopwordsRemoverBuilder(stopwords).build());
         preprocessors.add(new StemmerGRAS.StemmerGRASBuilder().build());
 
