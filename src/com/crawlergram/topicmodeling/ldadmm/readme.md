@@ -1,5 +1,5 @@
 ## LDA and DMM algorithms
-Written by [Dat Quoc Nguyen] (https://github.com/datquocnguyen).
+Written by [Dat Quoc Nguyen](https://github.com/datquocnguyen).
 Source code is [here](https://github.com/datquocnguyen/jLDADMM).
 
 ### Related publications

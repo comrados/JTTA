@@ -22,6 +22,7 @@ JARs can be found in /lib.
   * To Giulio Busato and [Gianmaria Silvello](https://github.com/giansilv) for [GRAS-stemmer](https://github.com/giansilv/statisticalStemmers/tree/master/GRAS-master).
   * To [Dat Quoc Nguyen](https://github.com/datquocnguyen) for [jLDADMM](https://github.com/datquocnguyen/jLDADMM).
   * To [Erik Tromp](https://github.com/ErikTromp/) for [LIGA](https://github.com/ErikTromp/LIGA) algorithm.
+  * To [Vasilis Vryniotis](https://github.com/datumbox) for [Naive Bayes](https://github.com/datumbox/NaiveBayesClassifier) algorithm.
 
 ## License
 
