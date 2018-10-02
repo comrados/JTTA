@@ -13,7 +13,6 @@ import com.crawlergram.structures.dialog.TDialog;
 import com.crawlergram.structures.results.TCResults;
 import com.crawlergram.textclassification.models.ClassificationModel;
 import com.crawlergram.textclassification.models.NaiveBayesModel;
-import com.crawlergram.textclassification.naivebayes.NaiveBayes;
 
 import java.io.BufferedReader;
 import java.io.File;
