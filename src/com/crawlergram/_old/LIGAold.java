@@ -1,5 +1,5 @@
 /*
- * Title: LIGA.java
+ * Title: LIGAold.java
  * Project: JTTA
  * Creator: Georgii Mikriukov
  * 2018
@@ -7,30 +7,28 @@
 
 /*
  * Title: LIGA.java
- * Project: LIGA
+ * Project: telegramJ
  * Creator: Georgii Mikriukov
  * 2018
  */
 
-package com.crawlergram.preprocessing.liga;
-
-import com.crawlergram._old.preprocess.Tokenizer;
-import com.fasterxml.jackson.core.*;
-import org.apache.commons.lang3.tuple.MutablePair;
+package com.crawlergram._old;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * Main class of language identification for short texts (LIGA and logLIGA).
- * Use it to train and classify texts, load and save models
- */
-public class LIGA {
+import com.crawlergram._old.preprocess.Tokenizer;
+import com.fasterxml.jackson.core.*;
+import org.apache.commons.lang3.tuple.MutablePair;
 
-    private boolean debug = false;
+public class LIGAold {
 
+    boolean debug = false;
+
+    // n of ngram
+    private int n = 3;
     // confidence threshold (if lower - language is still UNKNOWN)
     private double threshold = 0.0125;
     // max recursive search depth
@@ -42,28 +40,40 @@ public class LIGA {
     private TreeMap<String, TreeMap<String, TreeMap<String, Integer>>> edges = new TreeMap<>();
     private TreeMap<String, MutablePair<Integer, Integer>> counter = new TreeMap<>();
 
+    public int getN() {
+        return n;
+    }
+
+    public LIGAold setN(int n) {
+        this.n = n;
+        return this;
+    }
+
     public double getThreshold() {
         return threshold;
     }
 
-    public void setThreshold(double threshold) {
+    public LIGAold setThreshold(double threshold) {
         this.threshold = threshold;
+        return this;
     }
 
     public int getMaxSearchDepth() {
         return maxSearchDepth;
     }
 
-    public void setMaxSearchDepth(int maxSearchDepth) {
+    public LIGAold setMaxSearchDepth(int maxSearchDepth) {
         this.maxSearchDepth = maxSearchDepth;
+        return this;
     }
 
     public boolean isLogLIGA() {
         return logLIGA;
     }
 
-    public void setLogLIGA(boolean logLIGA) {
+    public LIGAold setLogLIGA(boolean logLIGA) {
         this.logLIGA = logLIGA;
+        return this;
     }
 
     public TreeMap<String, TreeMap<String, Integer>> getNodes() {
@@ -78,20 +88,14 @@ public class LIGA {
         return counter;
     }
 
-    public LIGA(LIGABuilder builder){
-        this.threshold = builder.threshold;
-        this.maxSearchDepth = builder.maxSearchDepth;
-        this.logLIGA = builder.logLIGA;
-    }
-
     /**
      * Adds the loaded dataset to model
      *
      * @param dataset
      */
-    public void addDataset(List<MutablePair<String, String>> dataset, int ngramLength){
+    public void addDataset(List<MutablePair<String, String>> dataset){
         for (MutablePair<String, String> entry: dataset){
-            addDocument(entry.right, entry.left, ngramLength);
+            addDocument(entry.right, entry.left);
         }
     }
 
@@ -100,14 +104,13 @@ public class LIGA {
      *
      * @param doc         document
      * @param language    language
-     * @param ngramLength length of ngram
      */
-    public void addDocument(String doc, String language, int ngramLength) {
+    public void addDocument(String doc, String language) {
         // Minor pre-processing
         doc = Tokenizer.preprocess(doc);
 
         // get ngrams
-        List<String> ngrams = getNgrams(doc, ngramLength);
+        List<String> ngrams = getNgrams(doc);
 
         // adds dock if only ngrams exist
         if (!ngrams.isEmpty()) {
@@ -135,21 +138,20 @@ public class LIGA {
     /**
      * gets ngrams of the string
      *
-     * @param doc         original doc
-     * @param ngramLength ngram length
+     * @param doc original doc
      */
-    private List<String> getNgrams(String doc, int ngramLength) {
+    private List<String> getNgrams(String doc) {
         List<String> out = new LinkedList<>();
         // number of ngrams
-        int num = doc.length() - (ngramLength - 1);
+        int num = doc.length() - (n - 1);
         // if ngrams available
         if (num > 0) {
             for (int i = 0; i < num; i++)
-                out.add(doc.substring(i, i + ngramLength));
+                out.add(doc.substring(i, i + n));
             // if ngrams anavailable, but document is not empty
         } else if (doc.length() > 0) {
             StringBuilder ngram = new StringBuilder(doc);
-            while (ngram.length() < ngramLength)
+            while (ngram.length() < n)
                 ngram.append(" ");
             out.add(ngram.toString());
         }
@@ -212,40 +214,27 @@ public class LIGA {
      * @param depth    current depth of recursion
      * @param maxDepth max allowed depth of recursion
      */
-    private List<Map<String, MutablePair<Integer, Integer>>> recPathMatching(List<String> path,
-                                                                             List<Map<String, MutablePair<Integer, Integer>>> counts,
-                                                                             Integer depth, Integer maxDepth) {
+    private Map<String, MutablePair<Integer, Integer>> recPathMatching(List<String> path,
+                                                                       HashMap<String, MutablePair<Integer, Integer>> counts,
+                                                                       Integer depth, Integer maxDepth) {
         if (depth > maxDepth || path.size() == 0)
             return counts; // Done traversing, return accumulator
         else if (path.size() == 1) {
-
-            HashMap<String, MutablePair<Integer, Integer>> ngramCounts = new HashMap<>();
-
             String ngram = path.get(0);
             // There is just one node left, just count node and disregard edges
             if (nodes.containsKey(ngram))
-                countNodes(ngram, ngramCounts);
-
-            if (!ngramCounts.isEmpty())
-                counts.add(ngramCounts);
-
+                countNodes(ngram, counts);
             return counts;
         } else {
-
-            HashMap<String, MutablePair<Integer, Integer>> ngramCounts = new HashMap<>();
-
             // Get source and target
             String source = path.get(0);
             String target = path.get(1);
 
             // First we update scores for the source node
             if (nodes.containsKey(source)) {
-                countNodes(source, ngramCounts);
-                countEdges(source, target, ngramCounts);
+                countNodes(source, counts);
+                countEdges(source, target, counts);
             }
-
-            if (!ngramCounts.isEmpty())
-                counts.add(ngramCounts);
 
             // Recurse with the trailing path
             path.remove(0);
@@ -294,64 +283,26 @@ public class LIGA {
     }
 
     /**
-     * Classifies a message and returns the most probable language
+     * Classifies a message_old and returns languages with probabilities
      *
      * @param doc original document
      */
-    public String classifyMostProbable(String doc, int ngramLength) {
+    public Map<String, Double> classify(String doc) {
 
         if (debug) System.out.println(doc);
 
-        Double bestScore = -1.0;
-        String bestLang = "UNKNOWN";
-
         if (modelIsNotEmpty()) {
             // Get all N-grams into a list
-            List<String> ngrams = getNgrams(doc, ngramLength);
+            List<String> ngrams = getNgrams(doc);
 
             // Get counts
-            List<Map<String, MutablePair<Integer, Integer>>> counts = recPathMatching(ngrams, new ArrayList<>(), 0, maxSearchDepth);
+            Map<String, MutablePair<Integer, Integer>> counts = recPathMatching(ngrams, new HashMap<>(), 0, maxSearchDepth);
 
-            // Calculate scores
-            Map<String, Double> scores = calcScores(counts);
+            return calcScores(counts);
 
-            // Get the best score or return unknown
-            for (Entry<String, Double> score : scores.entrySet()) {
-                if (score.getValue() > bestScore && score.getValue() > threshold) {
-                    bestScore = score.getValue();
-                    bestLang = score.getKey();
-                }
-            }
         } else {
-            bestLang = "EMPTY MODEL";
+            return new HashMap<>();
         }
-
-        if (debug) System.out.println("BEST: " + bestLang);
-        if (debug) System.out.println();
-
-        // Return best scoring language
-        return bestLang;
-    }
-
-    /**
-     * Gets scores for a given document
-     *
-     * @param doc document
-     * @param ngramLength n
-     */
-    public Map<String, Double> classifyAll(String doc, int ngramLength){
-        Map<String, Double> scores = new HashMap<>();
-        if (modelIsNotEmpty()) {
-            // Get all N-grams into a list
-            List<String> ngrams = getNgrams(doc, ngramLength);
-
-            // Get counts
-            List<Map<String, MutablePair<Integer, Integer>>> counts = recPathMatching(ngrams, new ArrayList<>(), 0, maxSearchDepth);
-
-            // Calculate scores
-            scores = calcScores(counts);
-        }
-        return scores;
     }
 
     /**
@@ -359,62 +310,13 @@ public class LIGA {
      *
      * @param counts counts
      */
-    private Map<String, Double> calcScores(List<Map<String, MutablePair<Integer, Integer>>> counts) {
-        if (logLIGA){
-            return calcScoresLogLIGA(counts);
-        } else {
-            return calcScoresLIGA(counts);
+    private Map<String, Double> calcScores(Map<String, MutablePair<Integer, Integer>> counts) {
+        Map<String, Double> scores = new HashMap<>();
+        for (Entry<String, MutablePair<Integer, Integer>> count : counts.entrySet()){
+            Double score = calcScore(count);
+            if (score >= threshold) scores.put(count.getKey(), score);
         }
-        //Map<String, Double> scores = new HashMap<>();
-    }
-
-    private Map<String, Double> calcScoresLIGA(List<Map<String, MutablePair<Integer, Integer>>> counts) {
-        Map<String, Double> total = new HashMap<>();
-
-        for (Map<String, MutablePair<Integer, Integer>> countMap: counts){
-            for (Entry<String, MutablePair<Integer, Integer>> count : countMap.entrySet()){
-                String lang = count.getKey(); // language
-                Integer nodes = count.getValue().getLeft(); // nodes count for language
-                Integer edges = count.getValue().getRight(); // edges count for language
-                Integer nodesTotal = counter.get(lang).getLeft(); // total number of nodes for language
-                Integer edgesTotal = counter.get(lang).getRight(); // total number of edges for language
-
-                double nodesNormalized = (double) nodes / (double) nodesTotal;
-                double edgesNormalized = (double) edges / (double) edgesTotal;
-
-                if (!total.containsKey(lang))
-                    total.put(lang, 0d);
-                total.put(lang, total.get(lang) + nodesNormalized + edgesNormalized);
-            }
-        }
-        return total;
-    }
-
-    private Map<String, Double> calcScoresLogLIGA(List<Map<String, MutablePair<Integer, Integer>>> counts) {
-        Map<String, Double> total = new HashMap<>();
-
-        for (Map<String, MutablePair<Integer, Integer>> countMap: counts){
-            for (Entry<String, MutablePair<Integer, Integer>> count : countMap.entrySet()){
-                String lang = count.getKey(); // language
-                Integer nodes = count.getValue().getLeft(); // nodes count for language
-                Integer edges = count.getValue().getRight(); // edges count for language
-                Integer nodesTotal = counter.get(lang).getLeft(); // total number of nodes for language
-                Integer edgesTotal = counter.get(lang).getRight(); // total number of edges for language
-
-                double nodesLogNormalized = 0d;
-                double edgesLogNormalized = 0d;
-
-                if ((nodes > 0) && (nodesTotal > 0))
-                    nodesLogNormalized = Math.log(nodes) / Math.log(nodesTotal);
-                if ((edges > 0) && (edgesTotal > 0))
-                    edgesLogNormalized = Math.log(edges) / Math.log(edgesTotal);
-
-                if (!total.containsKey(lang))
-                    total.put(lang, 0d);
-                total.put(lang, total.get(lang) + nodesLogNormalized + edgesLogNormalized);
-            }
-        }
-        return total;
+        return scores;
     }
 
     /**
@@ -449,7 +351,7 @@ public class LIGA {
      *
      * @param path path to the model
      */
-    public void loadModel(String path) {
+    public LIGAold loadModel(String path) {
         try {
             dropModel();
             JsonFactory jFactory = new JsonFactory();
@@ -474,10 +376,12 @@ public class LIGA {
             System.out.println("Unable to load model");
             e.printStackTrace();
         }
+        return this;
     }
 
     /**
      * reads model graph
+     *
      * @param jParser parser instance
      */
     private void readGraph(JsonParser jParser) throws IOException {
@@ -574,6 +478,7 @@ public class LIGA {
 
     /**
      * reads model counter
+     *
      * @param jParser parser instance
      */
     private void readCounter(JsonParser jParser) throws IOException {
@@ -678,7 +583,7 @@ public class LIGA {
     private void writeGraph(JsonGenerator jGenerator) throws IOException {
         jGenerator.writeFieldName("graph");
         jGenerator.writeStartObject();
-        for (Entry<String, TreeMap<String, Integer>> node: nodes.entrySet())
+        for (Entry<String, TreeMap<String, Integer>> node : nodes.entrySet())
             writeNgram(jGenerator, node);
         jGenerator.writeEndObject();
     }
@@ -687,7 +592,7 @@ public class LIGA {
      * writes ngram info (node and adjacent edges)
      *
      * @param jGenerator generator instance
-     * @param node ngram
+     * @param node       ngram
      */
     private void writeNgram(JsonGenerator jGenerator, Entry<String, TreeMap<String, Integer>> node) throws IOException {
         jGenerator.writeFieldName(node.getKey());
@@ -695,18 +600,18 @@ public class LIGA {
         // nodes
         jGenerator.writeFieldName("nodes");
         jGenerator.writeStartObject();
-        for (Entry<String, Integer> entry: node.getValue().entrySet())
+        for (Entry<String, Integer> entry : node.getValue().entrySet())
             jGenerator.writeNumberField(entry.getKey(), entry.getValue());
         jGenerator.writeEndObject();
         // edges
         jGenerator.writeFieldName("edges");
         jGenerator.writeStartObject();
-        if (edges.containsKey(node.getKey())){
+        if (edges.containsKey(node.getKey())) {
             TreeMap<String, TreeMap<String, Integer>> edgesTree = edges.get(node.getKey());
-            for (Entry<String, TreeMap<String, Integer>> edge: edgesTree.entrySet()){
+            for (Entry<String, TreeMap<String, Integer>> edge : edgesTree.entrySet()) {
                 jGenerator.writeFieldName(edge.getKey());
                 jGenerator.writeStartObject();
-                for (Entry<String, Integer> entry: edge.getValue().entrySet()){
+                for (Entry<String, Integer> entry : edge.getValue().entrySet()) {
                     jGenerator.writeNumberField(entry.getKey(), entry.getValue());
                 }
                 jGenerator.writeEndObject();
@@ -724,7 +629,7 @@ public class LIGA {
     private void writeCounter(JsonGenerator jGenerator) throws IOException {
         jGenerator.writeFieldName("counter");
         jGenerator.writeStartObject();
-        for (Entry<String, MutablePair<Integer, Integer>> entry: counter.entrySet()){
+        for (Entry<String, MutablePair<Integer, Integer>> entry : counter.entrySet()) {
             jGenerator.writeFieldName(entry.getKey());
             jGenerator.writeStartObject();
             jGenerator.writeNumberField("nodes", entry.getValue().getLeft());
@@ -734,35 +639,5 @@ public class LIGA {
         jGenerator.writeEndObject();
     }
 
-    public static class LIGABuilder {
-
-        // confidence threshold (if lower - language is still UNKNOWN)
-        private double threshold;
-        // max recursive search depth
-        private int maxSearchDepth = 1000;
-        // flag of model, if true - logLIGA, false - LIGA
-        private boolean logLIGA = true;
-
-        public LIGABuilder setMaxSearchDepth(int maxSearchDepth) {
-            this.maxSearchDepth = maxSearchDepth;
-            return this;
-        }
-
-        public LIGABuilder setLogLIGA(boolean logLIGA) {
-            this.logLIGA = logLIGA;
-            return this;
-        }
-
-        /**
-         * builder
-         */
-        public LIGABuilder(double threshold) {
-            this.threshold = threshold;
-        }
-
-        public LIGA build() {
-            return new LIGA(this);
-        }
-    }
 
 }

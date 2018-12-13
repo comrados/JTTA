@@ -27,7 +27,7 @@ public class LanguageIdentificator implements PreprocessorModel {
     public TDialog run(TDialog dialog) {
         if (langModel instanceof LIGA) {
             for (TMessage msg : dialog.getMessages())
-                msg.setLangs(((LIGA) langModel).classify(msg.getClearText()));
+                msg.setLangs(((LIGA) langModel).classifyAll(msg.getClearText(), 3));
         }
         if ((langModel instanceof LanguageDetector)) {
             for (TMessage msg : dialog.getMessages()) {

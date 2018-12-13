@@ -50,7 +50,8 @@ public class TextClassificationMain {
 
         // language identification model (loaded only once)
         String ligaModelPath = "res" + File.separator + "liga" + File.separator + "model_n3.liga";
-        LIGA ligaModel = new LIGA().setLogLIGA(true).setMaxSearchDepth(5000).setThreshold(0.5).setN(3).loadModel(ligaModelPath);
+        LIGA ligaModel = new LIGA.LIGABuilder(0.5).setLogLIGA(true).setMaxSearchDepth(1000).build();
+        ligaModel.loadModel(ligaModelPath);
 
         // optional language detection using Apache Tika
         LanguageDetector tikaModel = null;

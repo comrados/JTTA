@@ -71,7 +71,7 @@ public class UtilMethods {
     public static List<TEMessage> getMessageLanguages(List<TEMessage> msgs, Object lang) {
         if (lang instanceof LIGA) {
             for (TEMessage msg : msgs)
-                msg.setLangs(((LIGA) lang).classify(msg.getClearText()));
+                msg.setLangs(((LIGA) lang).classifyAll(msg.getClearText(), 3));
         }
         if ((lang instanceof LanguageDetector)) {
             for (TEMessage msg : msgs) {

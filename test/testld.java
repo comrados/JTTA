@@ -29,7 +29,8 @@ public class testld {
     public static void main(String[] args) {
 
         String ligaModel = "res" + File.separator + "liga" + File.separator + "model_n3.liga";
-        LIGA liga = new LIGA().setLogLIGA(true).setMaxSearchDepth(5000).setThreshold(0.5).setN(3).loadModel(ligaModel);
+        LIGA liga = new LIGA.LIGABuilder(0.5).setLogLIGA(true).setMaxSearchDepth(5000).build();
+        liga.loadModel(ligaModel);
         DBStorageReduced dbStorage = new MongoDBStorageReduced("telegramJ", "telegram", "cart", "localhost", 27017, "fs");
 
         Set<String> ltl = new HashSet<>();
@@ -127,7 +128,7 @@ public class testld {
 
     private static void getMessageLanguages(List<TEMessage> msgs, LIGA liga){
         for (TEMessage msg: msgs)
-            msg.setLangs(liga.classify(msg.getClearText()));
+            msg.setLangs(liga.classifyAll(msg.getClearText(), 3));
     }
 
 }
